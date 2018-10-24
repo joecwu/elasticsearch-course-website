@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elasticsearch訓練課程</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sticky-footer.css" rel="stylesheet">
+    <style type="text/css">
+      body { padding-top: 70px; }
+    </style>
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+      <div class="row">
+      <div class="col-lg-offset-1 col-lg-10 ">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Elasticsearch課程</a>
+        </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">章節 <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="tutorial.html">1. Elasticsearch基本操作</a></li>
+            <li><a href="apis.html">2. Elasticsearch Document APIs</a></li>
+            <li><a href="mapping-search.html">3. Elasticsearch Mapping與Search搭配</a></li>
+            <li><a href="elk.html">4. ELK stack建置</a></li>
+            <li><a href="#">5. ELK stack進階(建構中)</a></li>
+            <li><a href="#">Appendix A. Datasets</a></li>
+            <li><a href="resources.html">Appendix B. Resources</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+      </div><!-- /.navbar-collapse -->
+      </div>
+      </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <div class="page-header">
+            <h1>Appendix A. Datasets</h1>
+          </div>
+        </div>           
+      </div>      
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.1 load_movies.bat</h2>
+          <p><strong>1. Elasticsearch基本操作</strong>中所會用到的電影資訊。由於該份網頁教材中的程式碼僅適用於*nix-like的系統，<code>load_movies.bat</code>可讓Windows系統使用者亦可在學習過程中輕鬆匯入相同電影資訊至Elasticsearch cluster。</p>
+          <a href="load_movies.bat"><h3><code>load_movies.bat</code></h3></a>
+          <a href="load_movies_kibana.json"><h3><code>load movies via kibana dev tools</code></h3></a>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.2 top_rated.json</h2>
+          <p><strong>3. Elasticsearch Mapping與Search搭配</strong>中所使用到的電影資訊。適用於想練習Bulk API與較多數量document的query時。</p>
+          <a href="top_rated.json"><h3><code>top_rated.json</code></h3></a>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.3 shakespeare.json</h2>
+          <p>Elasticsearch官方網站中<a>kibana - 10 minutes walk through</a>教學文件中使用到的dataset。其中包含了莎士比亞各名劇的內容。</p>
+          <p>Mapping Definition</p>
+          <pre>PUT /shakespeare
+{
+ "mappings": {
+  "doc": {
+   "properties": {
+    "speaker": {"type": "keyword"},
+    "play_name": {"type": "keyword"},
+    "line_id": {"type": "integer"},
+    "speech_number": {"type": "integer"}
+   }
+  }
+ }
+}</pre>
+          <p>Linux / MacOS</p>
+          <pre>curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/doc/_bulk?pretty' --data-binary @shakespeare_6.0.json</pre>
+          <p>Windows Powershell</p>
+          <pre>Invoke-RestMethod "http://localhost:9200/shakespeare/doc/_bulk?pretty" -Method Post -ContentType 'application/x-ndjson' -InFile "shakespeare_6.0.json"</pre>
+          <a href="shakespeare_6.0.json"><h3><code>shakespeare_6.0.json</code></h3></a>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.4 apache_access_log</h2>
+          <p>由<a>MonitorWare</a>所提供的Apache sample access log。</p>
+          <a href="apache_access_log"><h3><code>apache_access_log</code></h3></a>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.5 apache_error_log</h2>
+          <p>由<a>MonitorWare</a>所提供的Apache sample error log。</p>
+          <a href="apache_error_log"><h3><code>apache_error_log</code></h3></a>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.6 pokemon.json</h2>
+	  <p>Pokemon data</p>
+	  <a href="pokemon_index.json"><h3><code>pokemon_index.json</code></h3></a>
+          <a href="pokemon.json"><h3><code>pokemon.json</code></h3></a>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-offset-1 col-lg-10 ">
+            <a href="datasets.html#">回到最前面</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

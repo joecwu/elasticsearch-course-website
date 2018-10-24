@@ -1,0 +1,16 @@
+{
+  "settings": {
+    "number_of_shards": 3
+  },
+  "mappings": {
+    "pokemon": {
+      "_doc": {
+        "properties": {
+          "Animation Time": {
+            "type": "double"
+          }
+        }
+      }
+    }
+  }
+}

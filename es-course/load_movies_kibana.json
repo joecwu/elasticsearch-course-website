@@ -1,0 +1,29 @@
+PUT movies/_doc/1
+{"title":"Star Wars: Episode VII – The Force Awakens","director":"J.J. Abrams","year":2015,"genres":["Action","Adventure","Fantasy"]}
+
+PUT movies/_doc/2
+{"title":"The Godfather","director":"Francis Ford Coppola","year":1972,"genres":["Crime","Drama"]}
+
+PUT movies/_doc/3
+{"title":"Kill Bill: Vol. 1","director":"Quentin Tarantino","year":2003,"genres":["Action","Crime","Thriller"]}
+
+PUT movies/_doc/4
+{"title":"To Kill a Mockingbird","director":"Robert Mulligan","year":1962,"genres":["Crime","Drama","Mystery"]}
+
+PUT movies/_doc/5
+{"title":"Apocalypse Now","director":"Francis Ford Coppola","year":1979,"genres":["Drama","War"]}
+
+PUT movies/_doc/6
+{"title":"Kill Bill: Vol. 1","director":"Quentin Tarantino","year":2003,"genres":["Action","Crime","Thriller"]}
+
+PUT movies/_doc/7
+{"title":"The Assassination of Jesse James by the Coward Robert Ford","director":"Andrew Dominik","year":2007,"genres":["Biography","Crime","Drama"]}
+
+PUT movies/_doc/8
+{"title":"Interstellar","director":"Christopher Nolan","year":2014,"genres":["Adventure","Sci-Fi"]}
+
+PUT movies/_doc/9
+{"title":"The Dark Knight","director":"Christopher Nolan","year":2008,"genres":["Action","Crime","Drama"]}
+
+PUT movies/_doc/10
+{"title":"Lawrence of Arabia","director":"David Lean","year":1962,"genres":["Adventure","Biography","Drama"]}

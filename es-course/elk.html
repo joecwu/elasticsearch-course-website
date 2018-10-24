@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elasticsearch訓練課程 - ELK stack建置</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sticky-footer.css" rel="stylesheet">
+    <style type="text/css">
+      body { padding-top: 70px; }
+    </style>
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+      <div class="row">
+      <div class="col-lg-offset-1 col-lg-10 ">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Elasticsearch課程</a>
+        </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">章節 <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="tutorial.html">1. Elasticsearch基本操作</a></li>
+            <li><a href="apis.html">2. Elasticsearch Document APIs</a></li>
+            <li><a href="mapping-search.html">3. Elasticsearch Mapping與Search搭配</a></li>
+            <li><a href="elk.html">4. ELK stack建置</a></li>
+            <li><a href="#">5. ELK stack進階(建構中)</a></li>
+            <li><a href="datasets.html">Appendix A. Datasets</a></li>
+            <li><a href="resources.html">Appendix B. Resources</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+      </div><!-- /.navbar-collapse -->
+      </div>
+      </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <div class="page-header">
+            <h1>4. ELK stack建置</h1>
+          </div>
+        </div>           
+      </div>      
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>4.1 安裝與執行Logstash</h2>
+          <p>首先請至<a href="http://logstash.net/">Logstash官方頁面</a>Logstash壓縮檔並解壓縮至任意安裝目錄。</p>
+          <p>Logstash在實際使用上我們會根據需求撰寫config檔來說明我們要處理的log來自何處，如何處理，以及存到什麼地方。但也能透過簡單的字串來對進行Logstash進行設定。</p>
+          <pre>
+$ cd logstash-1.x.x  # 你的Logstash安裝目錄
+$ bin/logstash -e 'input{ stdin{} } output{ stdout{} }'</pre>
+待Logstash啟動完成，我們可以在command line上簡單輸入幾個字元，然後按enter。應該會立刻出現加上日期時間、本機位址與剛剛輸入的字串；這代表Logstash的確自<strong>標準輸入(stdin)</strong>收到了訊息，也透過<strong>標準輸出(stdout)</strong>將訊息給輸出了。</p>
+<p>
+接著我們在Logstash的安裝目錄中建立內容如下的<code>logstash.conf</code>檔案，：
+<pre>
+input{
+    stdin{}
+}
+
+filter{
+    grok {
+        match => [ "message", "%{COMMONAPACHELOG}" ]
+    }
+}
+
+output{
+    stdout{
+        codec => rubydebug
+    }
+}
+</pre>
+以選項<code>-f</code>啟動Logstash：
+<pre>
+$ bin/logstash agent -f logstash.conf
+</pre>
+接著在command line上隨意貼入任一條Apache log並按下enter (Logstash以斷行來識別不同事件)，應會出現如下的output：
+<pre>
+$ bin/logstash agent -f logstash.config
+64.242.88.10 - - [07/Mar/2004:16:05:49 -0800] "GET /twiki/bin/edit/Main/Double_bounce_send
+er?topicparent=Main.ConfigurationVariables HTTP/1.1" 401 12846
+{
+        "message" => "64.242.88.10 - - [07/Mar/2004:16:05:49 -0800] \"GET /twiki/bin/edit/
+Main/Double_bounce_sender?topicparent=Main.ConfigurationVariables HTTP/1.1\" 401 12846\r",
+
+       "@version" => "1",
+     "@timestamp" => "2015-01-31T23:00:07.683Z",
+           "host" => "Joe-PC",
+       "clientip" => "64.242.88.10",
+          "ident" => "-",
+           "auth" => "-",
+      "timestamp" => "07/Mar/2004:16:05:49 -0800",
+           "verb" => "GET",
+        "request" => "/twiki/bin/edit/Main/Double_bounce_sender?topicparent=Main.Configura
+tionVariables",
+    "httpversion" => "1.1",
+       "response" => "401",
+          "bytes" => "12846"
+}
+</pre>
+這代表我們已經成功使用Logstash剖析Apache log，並將log中的各部分取出，成為一份代表Apache log的JSON document了。
+          </p>     
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-offset-1 col-lg-10 ">
+            <h2>4.2 從檔案讀入並寫到Elasticsearch中</h2>
+            <p>
+            現在修改<code>logstash.conf</code>檔案如下：
+            <pre>
+input{
+    stdin {}
+    file {
+        type => "apache"
+        path => ["C:/apache_access_log"]
+        start_position => "beginning"
+        sincedb_path => NUL
+    }
+}
+
+filter{
+    grok {
+        match => [ "message", "%{COMMONAPACHELOG}" ]
+    }
+}
+
+output{
+    stdout{
+        codec => rubydebug
+    }
+}</pre>
+上述設定檔要求Logstash的<code>file</code> plugin處理<code>path</code>中所指定的log file，將其逐條處理。<code>sincedb_path</code>是Logstash用來紀錄目前各個檔案讀到哪一行的一個小檔案；由於在練習過程中我們需要反覆重現讀取相同內容的過程，所以先把該黨的儲存路徑設為<code>NUL</code>(*nix-like系統即為<code>NUL</code>)，並將所有透過這個方式取得的log都加上一個名為<code>type</code>的欄位。
+            </p>
+            <p>
+現在請試著撰寫一份Logstash設定檔，使其可以讀入Apache log檔，並將剖析後的文件輸入Elasticsearch中，並在Elasticsearch端確認輸入的log數量正確無誤。
+            </p>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse4_2" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse4_2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>
+input{
+    #stdin {}
+    file {
+        type => "apache"
+        path => ["C:/apache_access_log"]  # where your log file is.
+        start_position => "beginning"
+        sincedb_path => NUL
+    }
+}
+
+filter{
+    grok {
+        match => [ "message", "%{COMMONAPACHELOG}" ]
+    }
+}
+
+output{
+    elasticsearch {
+        host => "localhost"
+        port => "9200"
+        protocol => "http"
+    }
+}</pre>
+<p>接著即可在確認Elasticsearch cluster正在執行中的狀況下，以上述設定檔內容重啟Logstash。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>   
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>4.3 移除多餘欄位並為log設定mapping</h2>
+          <p></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>4.4 使用Kibana</h2>
+          <p></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>4.5 完整執行ELK stack</h2>
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-offset-1 col-lg-10 ">
+            <a href="datasets.html#">回到最前面</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

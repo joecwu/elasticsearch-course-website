@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elasticsearch訓練課程</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sticky-footer.css" rel="stylesheet">
+    <style type="text/css">
+      body { padding-top: 70px; }
+    </style>
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+      <div class="row">
+      <div class="col-lg-offset-1 col-lg-10 ">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Elasticsearch課程</a>
+        </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">章節 <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">1. Elasticsearch基本操作</a></li>
+            <li><a href="apis.html">2. Elasticsearch Document APIs</a></li>
+            <li><a href="mapping-search.html">3. Elasticsearch Mapping與Search搭配</a></li>
+            <li><a href="elk.html">4. ELK stack建置</a></li>
+            <li><a href="#">5. ELK stack進階(建構中)</a></li>
+            <li><a href="datasets.html">Appendix A. Datasets</a></li>
+            <li><a href="resources.html">Appendix B. Resources</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+      </div><!-- /.navbar-collapse -->
+      </div>
+      </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <div class="page-header">
+            <h1>1. Elasticsearch基本操作</h1>
+          </div>
+        </div>           
+      </div>      
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.1 確認環境</h2>
+          <p>
+首先必須確認目前機器上的Java版本（Java Runtime Environment; JRE即可）是否為<strong>Java 7 update 55</strong>或以上版本。
+            <pre>
+$ java -version
+java version "1.8.0_25"
+Java(TM) SE Runtime Environment (build 1.8.0_25-b18)
+Java HotSpot(TM) Client VM (build 25.25-b02, mixed mode, sharing) </pre>
+如目前機器上沒有Java，請至<a href="http://www.oracle.com/technetwork/articles/javase/index-jsp-138363.html">Java官方網站下載頁</a>下載安裝。
+          </p>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.2 下載與執行Elasticsearch</h2>
+          <p>
+到<a href="http://www.elasticsearch.org/overview/elkdownloads/">Elasticsearch官方網站下載頁面</a>下載Elasticsearch最新版本的壓縮檔，解壓縮於任意安裝位置。
+          </p>
+          <p>
+要執行Elasticsearch；如果是Windows環境，執行<code>bin/elasticsearch.bat</code>；若為Lunix/Mac環境，執行<code>bin/elasticsearch</code>。這會讓Elasticsearch在前景執行，若要停止Elasticsearch，按下 <kbd><kbd>ctrl</kbd> + <kbd>C</kbd></kbd> 即可。
+          </p>
+          <h3>練習</h3>
+          <p>請試著執行包含兩個node的Elasticsearch cluster。並以合適的<code>_cat</code>API確認node數量與名稱，以及目前cluster中所存有的indices。</p>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <pre>$ curl -XGET <strong>localhost:9200/_cat/nodes?v</strong>
+host        ip            heap.percent ram.percent load node.role master name
+joecwu-PC   192.168.0.100            7          75      d         m      All-American
+joecwu-PC   192.168.0.100            5          75      d         *      Jericho Drumm
+
+$ curl -XGET <strong>localhost:9200/_cat/indices?v</strong>
+health status index  pri rep docs.count docs.deleted store.size pri.store.size</pre>
+      </div>
+    </div>
+  </div>
+  </div>
+  <h3>參考資料</h3>
+  <ul>
+  	<li>
+  		<a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cat.html" target="_blank">Elasticsearch CAT API列表</a>
+  	</li>
+  </ul>  
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.3 Index Documents</h2>          
+          <h3>練習</h3>
+          <p>請試著將下列文件index進目前的cluster中，再以合適的<code>_cat</code>API確認目前的index名稱與其中的document個數。</p>
+          <pre># Document 1
+{
+    "title": "Interstellar",
+    "director": "Christopher Nolan",
+    "year": 2014,
+    "genre": ["Adventure", "Sci-Fi"]
+}
+# Document 2
+{
+    "title": "The Dark Knight",
+    "director": "Christopher Nolan",
+    "year": 2008,
+    "genre": ["Action", "Crime", "Drama"]
+}</pre>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XPUT http://localhost:9200/movies/movie/1 -d '{
+    "title": "Interstellar",
+    "director": "Christopher Nolan",
+    "year": 2014,
+    "genre": ["Adventure", "Sci-Fi"]
+}'</strong>
+{"_index":"movies","_type":"movie","_id":"1","_version":1,"created":true}
+
+$ curl <strong>-XPUT http://localhost:9200/movies/movie/2 -d '{
+    "title": "The Dark Knight",
+    "director": "Christopher Nolan",
+    "year": 2008,
+    "genre": ["Action", "Crime", "Drama"]
+}'</strong>
+{"_index":"movies","_type":"movie","_id":"2","_version":1,"created":true}
+
+$ curl <strong>-XGET http://localhost:9200/_cat/indices?v</strong>
+health status index  pri rep docs.count docs.deleted store.size pri.store.size 
+green  open   movies   5   1          2            0     13.4kb          6.7kb</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-index_.html" target="_blank">Elasticsearch Document Index API</a>
+  	        </li>
+          </ul>  
+        </div>  
+      </div>
+      
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.4 Index More Documents</h2>
+          <h3>練習</h3>
+          <p>請將下列文件index進cluster中，並在該index上呼叫<code>_search</code>API。呼叫API時，後方有無加上<code>pretty</code>參數的差別為何？</p>
+          <pre># Document 3
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}
+
+# Document 4
+{
+    "title": "Lawrence of Arabia",
+    "director": "David Lean",
+    "year": 1962,
+    "genres": ["Adventure", "Biography", "Drama"]
+}
+
+# Document 5
+{
+    "title": "To Kill a Mockingbird",
+    "director": "Robert Mulligan",
+    "year": 1962,
+    "genres": ["Crime", "Drama", "Mystery"]
+}
+
+# Document 6
+{
+    "title": "Apocalypse Now",
+    "director": "Francis Ford Coppola",
+    "year": 1979,
+    "genres": ["Drama", "War"]
+}
+
+# Document 7
+{
+    "title": "Kill Bill: Vol. 1",
+    "director": "Quentin Tarantino",
+    "year": 2003,
+    "genres": ["Action", "Crime", "Thriller"]
+}
+
+# Document 8
+{
+    "title": "The Assassination of Jesse James by the Coward Robert Ford",
+    "director": "Andrew Dominik",
+    "year": 2007,
+    "genres": ["Biography", "Crime", "Drama"]
+}</pre>
+        </div>        
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.5 搜尋資料</h2>          
+          <h3>練習</h3>
+          <p>請試著搜尋<strong>上映年在2000年以後，genres包含"Action"</strong>的所有電影。</p>
+          
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1_5" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse1_5" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XGET http://localhost:9200/movies/_search?q=genres:action+AND+year:[2000+TO+*]</strong></pre>
+                  <p>或是</p>
+                  <pre>$ curl <strong>-XPOST http://localhost:9200/movies/_search?pretty -d '{
+  "query": {
+    "query_string": {
+      "query": "genres:action AND year:[2000 TO *]"
+    }
+  }  
+}'</strong></pre>
+                  <p>搜尋結果：</p>
+                  <pre>{
+   "took": 3,
+   "timed_out": false,
+   "_shards":
+   {
+       "total": 5,
+       "successful": 5,
+       "failed": 0
+   },
+   "hits":
+   {
+       "total": 2,
+       "max_score": 1.0606601,
+       "hits":
+       [
+           {
+               "_index": "movies",
+               "_type": "movie",
+               "_id": "6",
+               "_score": 1.0606601,
+               "_source":
+               {
+                   "title": "Kill Bill: Vol. 1",
+                   "director": "Quentin Tarantino",
+                   "year": 2003,
+                   "genres":
+                   [
+                       "Action",
+                       "Crime",
+                       "Thriller"
+                   ]
+               }
+           },
+           {
+               "_index": "movies",
+               "_type": "movie",
+               "_id": "2",
+               "_score": 1.0606601,
+               "_source":
+               {
+                   "title": "The Dark Knight",
+                   "director": "Christopher Nolan",
+                   "year": 2008,
+                   "genres":
+                   [
+                       "Action",
+                       "Crime",
+                       "Drama"
+                   ]
+               }
+           }
+       ]
+   }
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>參考資料</h3>
+          <p>
+          <ul>
+            <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search.html" target="_blank">Elasticsearch Search API</a>
+  	        </li>
+  	        <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-uri-request.html" target="_blank">Elasticsearch URI Search</a>
+  	        </li>
+  	        <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html" target="_blank">Elasticsearch Query Search Query</a>
+  	        </li>
+          </ul>  
+          </p>
+        </div>  
+      </div>      
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.6 Query with filters</h2>          
+          <h3>練習</h3>
+          <p>請試著進行如<strong>1.5 搜尋資料</strong>的查詢，但上映年的部分<strong>改以filter進行快取</strong>。</p>
+          <p>註：此題練習如要完全符合需求需使用到<code>range filter</code>，那是一種可針對數字或日期型別欄位進行篩選的filter。</p>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1_6" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse1_6" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XPOST http://localhost:9200/movies/_search?pretty -d '{
+    "query": {
+        "bool": {
+            "must": {
+                "term": { "genres": "action" }
+            },
+            "filter": {
+                "range": {
+                    "year": { "gt": 2000 }
+                }
+            }
+        }
+    }  
+}'</strong></pre>
+                  <p>搜尋結果：</p>
+                  <pre>{
+    "took": 4,
+    "timed_out": false,
+    "_shards":
+    {
+       "total": 5,
+       "successful": 5,
+       "failed": 0
+    },
+    "hits":
+    {
+       "total": 2,
+       "max_score": 0.5,
+       "hits":
+       [
+           {
+               "_index": "movies",
+               "_type": "movie",
+               "_id": "6",
+               "_score": 0.5,
+               "_source":
+               {
+                   "title": "Kill Bill: Vol. 1",
+                   "director": "Quentin Tarantino",
+                   "year": 2003,
+                   "genres":
+                   [
+                       "Action",
+                       "Crime",
+                       "Thriller"
+                   ]
+               }
+           },
+           {
+               "_index": "movies",
+               "_type": "movie",
+               "_id": "2",
+               "_score": 0.5,
+               "_source":
+               {
+                   "title": "The Dark Knight",
+                   "director": "Christopher Nolan",
+                   "year": 2008,
+                   "genres":
+                   [
+                       "Action",
+                       "Crime",
+                       "Drama"
+                   ]
+               }
+           }
+       ]
+    }
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>   
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-filters.html" target="_blank">Elasticsearch Filters介紹</a>
+  	        </li>
+            <li>
+                <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-filtered-query.html" target="_blank">Elasticsearch Filtered Query</a>
+            </li>
+            <li>
+                <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-range-filter.html" target="_blank">Elasticsearch Range Filter</a>
+            </li>
+          </ul>  
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.7 Mapping操作</h2>
+          <p>每份被存入Elasticsearch的document都必定有相對應的mapping使Elasticsearch清楚應如何處理該類document中的各個欄位。Mapping既然是一組與設定相關的資訊，Elasticsearch當然也準備有能夠讓我們操作mapping的API。</p>
+          <h3>練習</h3>
+          <ul>
+            <li>請查詢目前<code>movies</code> index中<code>movie</code> type所使用的mapping內容。</li>
+            <li>仿照查詢而來的設定，為<code>movie</code> type加入針對如果未來電影文件中具備演員(<strong>actors</strong>，應為字串型別)欄位時的mapping。</li>
+          </ul>        
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1_7" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse1_7" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                <p>查詢目前type所使用的mapping：</p>
+                  <pre>$ curl <strong>-XGET http://localhost:9200/movies/movie/_mapping</strong>
+{
+    "movies":
+    {
+        "mappings":
+        {
+            "movie":
+            {
+                "properties":
+                {
+                    "director":
+                    {
+                        "type": "string"
+                    },
+                    "genres":
+                    {
+                        "type": "string"
+                    },
+                    "title":
+                    {
+                        "type": "string"
+                    },
+                    "year":
+                    {
+                        "type": "long"
+                    }
+                }
+            }
+        }
+    }
+}</pre>
+                  <p>更新mapping：</p>
+                  <pre>$ curl <strong>-XPUT http://localhost:9200/movies/movie/_mapping -d '{
+    "movie" : {
+        "properties" : {
+            "actors" : {"type" : "string"}
+        }
+    }
+}'</strong>
+{"acknowledged":true}</pre>
+                </div>
+              </div>
+            </div>
+          </div> 
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping.html" target="_blank">Elasticsearch Mapping介紹</a>
+  		    </li>
+  		    <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get-mapping.html" target="_blank">Elasticsearch Get Mapping API</a>
+  		    </li>
+            <li>  
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html" target="_blank">Elasticsearch Put Mapping API</a>
+  	        </li>
+          </ul>    
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>1.8 刪除index</h2>          
+          <h3>練習</h3>
+          <p>請試著刪除index <code>movies</code>，並在刪除後進行確認。</p>          
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1_8" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse1_8" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XDELETE http://localhost:9200/movies</strong>
+{"acknowledged":true}
+
+$ curl -XGET http://localhost:9200/_cat/indices?v
+health status index  pri rep docs.count docs.deleted store.size pri.store.size 
+</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-delete-index.html" target="_blank">Elasticsearch Delete Index API</a>
+  	        </li>
+          </ul>  
+        </div>  
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-offset-1 col-lg-10 ">
+            <a href="tutorial.html#">回到最前面</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

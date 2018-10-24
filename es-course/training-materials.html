@@ -1,0 +1,1591 @@
+<!DOCTYPE html><html>
+
+<head>
+<meta charset="utf-8">
+<title>ElasticsearchTrainingMaterials</title>
+<style type="text/css">
+body {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  padding: 30px; }
+
+body > *:first-child {
+  margin-top: 0 !important; }
+body > *:last-child {
+  margin-bottom: 0 !important; }
+
+a {
+  color: #4183C4; }
+a.absent {
+  color: #cc0000; }
+a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+h1 tt, h1 code {
+  font-size: inherit; }
+
+h2 tt, h2 code {
+  font-size: inherit; }
+
+h3 tt, h3 code {
+  font-size: inherit; }
+
+h4 tt, h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+h1 {
+  font-size: 28px;
+  color: black; }
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+h3 {
+  font-size: 18px; }
+
+h4 {
+  font-size: 16px; }
+
+h5 {
+  font-size: 14px; }
+
+h6 {
+  color: #777777;
+  font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0; }
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0; }
+
+li p.first {
+  display: inline-block; }
+li {
+  margin: 0; }
+ul, ol {
+  padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+  margin-top: 0; }
+
+dl {
+  padding: 0; }
+  dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+img {
+  max-width: 100%; }
+
+span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+</style>
+</head>
+<body>
+<h1 id="toc_0">Elasticsearch Training Material</h1>
+
+<h2 id="toc_1">Setup Elasticsearch</h2>
+
+<div><pre><code class="language-none">GET _cat/nodes?v
+
+PUT /movies/_doc/1
+{
+  &quot;title&quot;: &quot;Star Wars: Episode VII – The Force Awakens&quot;,
+  &quot;director&quot;: &quot;J.J. Abrams&quot;,
+  &quot;year&quot;: 2015
+}
+
+GET _cat/indices?v
+
+GET _cat
+
+GET _search
+
+PUT /movies/_doc/1
+{
+  &quot;title&quot;: &quot;Star Wars: Episode VII – The Force Awakens&quot;,
+  &quot;director&quot;: &quot;J.J. Abrams&quot;,
+  &quot;year&quot;: 2015,
+  &quot;genres&quot;: [&quot;Action&quot;, &quot;Adventure&quot;, &quot;Fantasy&quot;]
+}
+
+PUT /movies/_doc/2
+{
+    &quot;title&quot;: &quot;The Godfather&quot;,
+    &quot;director&quot;: &quot;Francis Ford Coppola&quot;,
+    &quot;year&quot;: 1972,
+    &quot;genres&quot;: [&quot;Crime&quot;, &quot;Drama&quot;]
+}
+
+PUT /movies/_doc/3
+{
+    &quot;title&quot;: &quot;Kill Bill: Vol. 1&quot;,
+    &quot;director&quot;: &quot;Quentin Tarantino&quot;,
+    &quot;year&quot;: 2003,
+    &quot;genres&quot;: [&quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;]
+}
+
+GET /movies/_doc/1
+
+GET /movies/_doc/1?_source=title,director
+
+GET /movies/_doc/1/_source
+
+DELETE /movies/_doc/1</code></pre></div>
+
+<h2 id="toc_2">Search</h2>
+
+<div><pre><code class="language-none">GET /movies/_search
+
+GET /movies/_doc/_search
+
+POST _search
+{
+  &quot;query&quot;: {
+    &quot;match_all&quot;: {}
+  }
+}
+
+POST /movies/_search
+{
+  &quot;query&quot;: {
+    &quot;match_all&quot;: {}
+  }
+}
+
+POST /movies/_doc/_search
+{
+  &quot;query&quot;: {
+    &quot;match_all&quot;: {}
+  },
+  &quot;_source&quot;: [&quot;title&quot;,&quot;director&quot;]
+}
+
+POST /movies/_search
+{
+    &quot;query&quot;: {
+        &quot;query_string&quot;: {
+           &quot;query&quot;: &quot;kill&quot;
+        }
+    }
+}
+
+GET /movies/_search?q=kill
+
+GET /movies/_search?q=title:kill
+
+# Filter
+
+POST /movies/_search
+{
+    &quot;query&quot;: {
+        &quot;bool&quot;: {
+            &quot;must&quot;: [
+                {
+                    &quot;range&quot;: {
+                       &quot;year&quot;: {
+                          &quot;from&quot;: 1972
+                       }
+                    }
+                }
+            ], 
+            &quot;filter&quot;: [
+                {
+                    &quot;term&quot;: {
+                        &quot;genres&quot;: &quot;crime&quot;
+                    }
+                }
+            ]
+        }
+    }
+}
+
+POST /movies/_search
+{
+    &quot;query&quot;: {
+        &quot;bool&quot;: {
+            &quot;filter&quot;: {
+                &quot;term&quot;: {
+                    &quot;year&quot;: &quot;2003&quot;
+                }
+            }
+        }
+    }
+}
+
+POST _search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: {
+        &quot;query_string&quot;: {
+           &quot;fields&quot;: [&quot;title&quot;],
+           &quot;query&quot;: &quot;kill&quot;
+        }
+      }, 
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;year&quot;: &quot;2003&quot;
+        }
+      }
+    }
+  }
+}
+
+POST _search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: {
+        &quot;match_all&quot;: {}
+      }, 
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;year&quot;: &quot;2014&quot;
+        }
+      }
+    }
+  }
+}</code></pre></div>
+
+<h2 id="toc_3">Mapping</h2>
+
+<div><pre><code class="language-none">POST _search
+{
+  &quot;query&quot;: {
+    &quot;term&quot;: {
+      &quot;director&quot;: &quot;J.J. Abrams&quot;
+    }
+  }
+}
+
+POST _search
+{
+  &quot;query&quot;: {
+    &quot;term&quot;: {
+      &quot;director&quot;: &quot;abrams&quot;
+    }
+  }
+}
+
+POST /movies/_doc/_mapping
+{
+  &quot;_doc&quot;: {
+    &quot;properties&quot;: {
+      &quot;director&quot;: {
+        &quot;type&quot;: &quot;keyword&quot;
+      }
+    }
+  }
+}
+
+POST /movies/_doc/_mapping
+{
+   &quot;_doc&quot;: {
+      &quot;properties&quot;: {
+         &quot;director&quot;: {
+            &quot;type&quot;: &quot;text&quot;,
+            &quot;fields&quot;: {
+                &quot;original&quot;: {&quot;type&quot;: &quot;keyword&quot;} 
+            }
+         }
+      }
+   }
+}
+
+PUT /movies/_doc/1
+{
+  &quot;title&quot;: &quot;Star Wars: Episode VII – The Force Awakens&quot;,
+  &quot;director&quot;: &quot;J.J. Abrams&quot;,
+  &quot;year&quot;: 2015,
+  &quot;genres&quot;: [&quot;Action&quot;, &quot;Adventure&quot;, &quot;Fantasy&quot;]
+}
+
+POST /movies/_doc/_search
+{
+  &quot;query&quot;: {
+    &quot;term&quot;: {
+      &quot;director.original&quot;: &quot;J.J. Abrams&quot;
+    }
+  }
+}
+
+# Since 5.0 _default_ mapping for string has keyword field.
+GET /movies/_doc/_mapping
+</code></pre></div>
+
+<h2 id="toc_4">Data in/out</h2>
+
+<div><pre><code class="language-none">
+# Create Index
+PUT /movies
+{
+  &quot;settings&quot; : {
+    &quot;number_of_shards&quot; : 1
+  },
+  &quot;mappings&quot; : {
+    &quot;_doc&quot; : {
+      &quot;_source&quot; : { &quot;enabled&quot; : false },
+      &quot;properties&quot; : {
+        &quot;director&quot;: {
+          &quot;type&quot;: &quot;text&quot;,
+          &quot;fields&quot;: {
+            &quot;original&quot;: {&quot;type&quot;: &quot;keyword&quot;}
+          }
+        }
+      }
+    }
+  }
+}
+
+# Indexing Document
+PUT movies/_doc/8/_create
+{
+  &quot;title&quot;: &quot;Star Wars: Episode VII – The Force Awakens&quot;,
+  &quot;director&quot;: &quot;J.J. Abrams&quot;,
+  &quot;year&quot;: 2015,
+  &quot;Genres&quot;: [
+    &quot;Action&quot;,
+    &quot;Adventure&quot;,
+    &quot;Fantasy&quot;
+  ]
+}
+
+PUT movies/_doc/8?op_type=create
+{
+  &quot;title&quot;: &quot;Star Wars: Episode VII – The Force Awakens&quot;,
+  &quot;director&quot;: &quot;J.J. Abrams&quot;,
+  &quot;year&quot;: 2015,
+  &quot;Genres&quot;: [
+    &quot;Action&quot;,
+    &quot;Adventure&quot;,
+    &quot;Fantasy&quot;
+  ]
+}
+
+# Get API
+
+GET /movies/_doc/1
+
+# Exists API
+
+HEAD /movies/_doc/1
+
+# Delete API
+
+DELETE /movies/_doc/1
+
+# Delete by Query API
+
+POST /movies/_delete_by_query
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} } 
+}
+
+# Update API
+
+POST /movies/_doc/1/_update
+{
+  &quot;doc&quot;:{
+    &quot;likes&quot;: 123
+  }
+}
+
+# Multi Get API
+
+GET /_mget
+{
+  &quot;docs&quot;: [
+    {
+      &quot;_index&quot;: &quot;movies&quot;,
+      &quot;_type&quot;: &quot;_doc&quot;,
+      &quot;_id&quot;: &quot;1&quot;
+    },
+    {
+      &quot;_index&quot;: &quot;movies&quot;,
+      &quot;_type&quot;: &quot;_doc&quot;,
+      &quot;_id&quot;: &quot;2&quot;
+    }
+  ]
+}
+
+GET /movies/_mget
+{ 
+  &quot;ids&quot;: [&quot;1&quot;,&quot;2&quot;]
+}
+
+# Bulk API
+
+curl -i -XPUT http://localhost:9200/_bulk -H &#39;Content-Type: application/json&#39; --data-binary @top_rated.json
+
+curl -i -XPUT http://localhost:9200/shakespeare/doc/_bulk -H &#39;Content-Type: application/x-ndjson&#39; --data-binary @shakespeare_6.0.json
+
+or
+
+PUT /_bulk
+{{past the top_rated.json}}
+
+# Search API
+
+GET /movies/_search?q=star
+
+GET /movies/_search?q=star+OR+kill
+
+GET /movies/_search?q=(star+OR+kill)+AND+year:[2003+TO+*]
+
+POST /movies/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: [
+        {
+          &quot;query_string&quot;: {
+            &quot;query&quot;: &quot;star OR kill&quot;
+          }
+        }
+      ],
+      &quot;filter&quot;: {
+        &quot;range&quot;: {
+          &quot;year&quot;: {
+            &quot;gte&quot;: 2003
+          }
+        }
+      }
+    }
+  }
+}
+
+POST /movies/_search
+{
+  &quot;from&quot;: 0, 
+  &quot;size&quot;: 20, 
+  &quot;sort&quot;: [
+    {
+      &quot;year&quot;: {
+        &quot;order&quot;: &quot;asc&quot;
+      }
+    }
+  ], 
+  &quot;profile&quot;: true,
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: [
+        {
+          &quot;match&quot;: {
+            &quot;title&quot;: {
+              &quot;query&quot;: &quot;star kill&quot;,
+              &quot;operator&quot;: &quot;or&quot;
+            }
+          }
+        }
+      ],
+      &quot;filter&quot;: {
+        &quot;range&quot;: {
+          &quot;year&quot;: {
+            &quot;gte&quot;: 2003
+          }
+        }
+      }
+    }
+  }
+}
+</code></pre></div>
+
+<h2 id="toc_5">Segments</h2>
+
+<div><pre><code class="language-none">  GET /_cat/indices?v
+
+  GET /_cat/segments?v
+
+  POST /_forcemerge?max_num_segments=1</code></pre></div>
+
+<hr>
+
+<h1 id="toc_6">For Day 2</h1>
+
+<hr>
+
+<h2 id="toc_7">Analyzer</h2>
+
+<div><pre><code class="language-none">POST /_analyze
+{
+  &quot;tokenizer&quot;: &quot;keyword&quot;, 
+  &quot;text&quot;: &quot;New York&quot;
+}
+
+POST /_analyze
+{
+  &quot;tokenizer&quot;: &quot;keyword&quot;, 
+  &quot;filter&quot;: [ &quot;lowercase&quot;, &quot;stop&quot; ],
+  &quot;text&quot;: &quot;New York&quot;
+}
+
+POST /_analyze
+{
+  &quot;tokenizer&quot;: &quot;whitespace&quot;, 
+  &quot;filter&quot;: [ &quot;lowercase&quot;, &quot;stop&quot; ],
+  &quot;text&quot;: &quot;The New York city is a big city&quot;
+}
+
+POST /_analyze
+{
+  &quot;tokenizer&quot;: &quot;keyword&quot;, 
+  &quot;filter&quot;: [ &quot;lowercase&quot; ],
+  &quot;text&quot;: &quot;this is a &lt;b&gt;HTML&lt;/b&gt; document&quot;
+}
+
+POST /_analyze
+{
+  &quot;tokenizer&quot;: &quot;keyword&quot;, 
+  &quot;filter&quot;: [ &quot;lowercase&quot; ],
+  &quot;char_filter&quot;: [ &quot;html_strip&quot; ],
+  &quot;text&quot;: &quot;this is a &lt;b&gt;HTML&lt;/b&gt; document&quot;
+}
+
+PUT /courses
+{
+    &quot;settings&quot;: {
+        &quot;index&quot;: {
+            &quot;analysis&quot;: {
+                &quot;analyzer&quot;: {
+                    &quot;custom_analyzer&quot;: {
+                        &quot;tokenizer&quot;: &quot;lowercase&quot;,
+                        &quot;filter&quot;: [&quot;lowercase&quot;, &quot;stop&quot;, &quot;snowball&quot;]
+                    }
+                }
+            }
+        }
+    },
+    &quot;mappings&quot;: {
+        &quot;topic&quot;: {
+            &quot;properties&quot;: {
+                &quot;title&quot;: {
+                    &quot;type&quot;: &quot;text&quot;,
+                    &quot;store&quot;: true,
+                    &quot;index&quot;: true,
+                    &quot;analyzer&quot;: &quot;custom_analyzer&quot;
+                }
+            }
+        }
+    }
+}
+
+#Deprecated since 6.0
+GET /courses/_analyze?field=topic.title&amp;text=test for customized analyzer
+
+POST /courses/_analyze
+{
+  &quot;field&quot;: &quot;topic.title&quot;, 
+  &quot;text&quot;: &quot;test for customized analyzer&quot;
+}
+
+# Dev Tools HTTP GET w/ 中文 會有問題
+POST _analyze
+{
+  &quot;tokenizer&quot;: &quot;icu_tokenizer&quot;, 
+  &quot;text&quot;: &quot;蔡英文&quot;
+}
+
+POST /_analyze
+{
+  &quot;tokenizer&quot;: &quot;icu_tokenizer&quot;, 
+  &quot;text&quot;: &quot;蔡英文跟柯文哲去基隆廟口夜市吃宵夜&quot;
+}
+
+POST /_analyze
+{
+  &quot;analyzer&quot;: &quot;smartcn&quot;, 
+  &quot;text&quot;: &quot;蔡英文跟柯文哲去基隆廟口夜市吃宵夜&quot;
+}
+
+PUT /chinese
+{
+    &quot;mappings&quot;: {
+        &quot;smartcn&quot;: {
+            &quot;properties&quot;: {
+                &quot;title&quot;: {
+                    &quot;type&quot;: &quot;text&quot;,
+                    &quot;store&quot;: true,
+                    &quot;index&quot;: true,
+                    &quot;analyzer&quot;: &quot;smartcn&quot;
+                },
+                &quot;body&quot;: {
+                    &quot;type&quot;: &quot;text&quot;,
+                    &quot;store&quot;: true,
+                    &quot;index&quot;: true,
+                    &quot;analyzer&quot;: &quot;smartcn&quot;
+                }
+            }
+        }
+    }
+}
+
+PUT /chinese/_doc/1
+{
+  &quot;title&quot;: &quot;基隆廟口夜市&quot;,
+  &quot;body&quot;: &quot;蔡英文跟柯文哲去基隆廟口夜市吃宵夜&quot;
+}
+
+PUT /chinese/_doc/2
+{
+  &quot;title&quot;: &quot;愈夜愈美&quot;,
+  &quot;body&quot;: &quot;夜色愈夜愈美麗&quot;
+}
+
+PUT /chinese/_doc/3
+{
+  &quot;title&quot;: &quot;英文考試&quot;,
+  &quot;body&quot;: &quot;英文考試100分&quot;
+}
+
+PUT /chinese/_doc/4
+{
+  &quot;title&quot;: &quot;英文考試&quot;,
+  &quot;body&quot;: &quot;蔡小明英文考試不及格&quot;
+}
+
+PUT /chinese/_doc/5
+{
+  &quot;title&quot;: &quot;電影導演&quot;,
+  &quot;body&quot;: &quot;蔡明亮是一位出生於英屬砂勞越的電影導演，英文很好&quot;
+}
+
+POST /chinese/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;body&quot;: &quot;夜色&quot;
+    }
+  }
+}
+
+POST /chinese/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;body&quot;: &quot;蔡英文&quot;
+    }
+  }
+}
+</code></pre></div>
+
+<h2 id="toc_8">Mapping</h2>
+
+<h3 id="toc_9">Store</h3>
+
+<div><pre><code class="language-none">DELETE /my_index
+
+PUT /my_index
+{
+  &quot;settings&quot;:{
+    &quot;refresh_interval&quot;: &quot;1s&quot;
+  },
+  &quot;mappings&quot;: {
+    &quot;my_type&quot;: {
+      &quot;_source&quot;: {
+        &quot;enabled&quot;: false
+      },
+      &quot;properties&quot;: {
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;text&quot;,
+          &quot;store&quot;: true
+        },
+        &quot;date&quot;: {
+          &quot;type&quot;: &quot;date&quot;,
+          &quot;store&quot;: true
+        },
+        &quot;content&quot;: {
+          &quot;type&quot;: &quot;text&quot;
+        }
+      }
+    }
+  }
+}
+
+PUT /my_index
+{
+  &quot;settings&quot;:{
+    &quot;refresh_interval&quot;: &quot;1s&quot;
+  },
+  &quot;mappings&quot;: {
+    &quot;my_type&quot;: {
+      &quot;_source&quot;: {
+        &quot;enabled&quot;: true,
+        &quot;excludes&quot;: [&quot;content&quot;]
+      },
+      &quot;properties&quot;: {
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;text&quot;
+        },
+        &quot;date&quot;: {
+          &quot;type&quot;: &quot;date&quot;
+        },
+        &quot;content&quot;: {
+          &quot;type&quot;: &quot;text&quot;
+        }
+      }
+    }
+  }
+}
+
+PUT /my_index/my_type/1
+{
+  &quot;title&quot;:   &quot;Some short title&quot;,
+  &quot;date&quot;:    &quot;2015-01-01&quot;,
+  &quot;content&quot;: &quot;A very long content field...&quot;
+}
+
+GET /my_index/my_type/1
+
+GET my_index/_search
+{
+  &quot;stored_fields&quot;: [ &quot;title&quot;, &quot;date&quot; ] 
+}</code></pre></div>
+
+<h3 id="toc_10">Copy To</h3>
+
+<div><pre><code class="language-none">PUT /copy_to
+{
+  &quot;mappings&quot;: {
+    &quot;test&quot;: {
+      &quot;properties&quot;: {
+        &quot;first_name&quot;: {
+          &quot;type&quot;: &quot;text&quot;,
+          &quot;copy_to&quot;: &quot;full_name&quot; 
+        },
+        &quot;last_name&quot;: {
+          &quot;type&quot;: &quot;text&quot;,
+          &quot;copy_to&quot;: &quot;full_name&quot; 
+        },
+        &quot;full_name&quot;: {
+          &quot;type&quot;: &quot;text&quot;
+        }
+      }
+    }
+  }
+}
+
+PUT /copy_to/test/1
+{
+  &quot;first_name&quot;: &quot;John&quot;,
+  &quot;last_name&quot;: &quot;Smith&quot;
+}
+
+GET /copy_to/test/_search</code></pre></div>
+
+<h3 id="toc_11">Term Vector</h3>
+
+<div><pre><code class="language-none">PUT term_vector
+{
+  &quot;mappings&quot;: {
+    &quot;test&quot;: {
+      &quot;properties&quot;: {
+        &quot;text&quot;: {
+          &quot;store&quot;: &quot;no&quot;, 
+          &quot;type&quot;:        &quot;text&quot;,
+          &quot;term_vector&quot;: &quot;with_positions_offsets&quot;
+        }
+      }
+    }
+  }
+}
+
+PUT term_vector/test/1
+{
+  &quot;text&quot;: &quot;Quick brown fox&quot;
+}
+
+GET term_vector/_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+           &quot;text&quot;: &quot;brown fox&quot;
+        }
+    },
+    &quot;highlight&quot;: {
+        &quot;fields&quot;: {
+            &quot;text&quot;: {}
+        }
+    }
+}</code></pre></div>
+
+<h3 id="toc_12">Nested Fileds</h3>
+
+<div><pre><code class="language-none">PUT nested_fields/test/1
+{
+   &quot;group&quot;: &quot;fans&quot;,
+   &quot;user&quot;: [
+      {
+         &quot;first&quot;: &quot;John&quot;,
+         &quot;last&quot;: &quot;Smith&quot;
+      },
+      {
+         &quot;first&quot;: &quot;Alice&quot;,
+         &quot;last&quot;: &quot;White&quot;
+      }
+   ]
+}
+
+GET nested_fields/_search 
+{
+   &quot;query&quot;: {
+      &quot;bool&quot;: {
+         &quot;must&quot;: [
+            {
+               &quot;match&quot;: {
+                  &quot;user.first&quot;: &quot;Alice&quot;
+               }
+            },
+            {
+               &quot;match&quot;: {
+                  &quot;user.last&quot;: &quot;Smith&quot;
+               }
+            }
+         ]
+      }
+   }
+}
+
+GET nested_fields/_mapping
+
+DELETE nested_fields
+
+PUT nested_fields 
+{
+   &quot;mappings&quot;: {
+      &quot;test&quot;: {
+         &quot;properties&quot;: {
+            &quot;user&quot;: {
+               &quot;type&quot;: &quot;nested&quot;
+            }
+         }
+      }
+   }
+}
+
+GET nested_fields/_mapping
+
+PUT nested_fields/test/1
+{
+   &quot;group&quot;: &quot;fans&quot;,
+   &quot;user&quot;: [
+      {
+         &quot;first&quot;: &quot;John&quot;,
+         &quot;last&quot;: &quot;Smith&quot;
+      },
+      {
+         &quot;first&quot;: &quot;Alice&quot;,
+         &quot;last&quot;: &quot;White&quot;
+      }
+   ]
+}
+
+GET nested_fields/_search 
+{
+   &quot;query&quot;: {
+      &quot;nested&quot;: {
+         &quot;path&quot;: &quot;user&quot;,
+         &quot;query&quot;: {
+            &quot;bool&quot;: {
+               &quot;must&quot;: [
+                  {
+                     &quot;match&quot;: {
+                        &quot;user.first&quot;: &quot;Alice&quot;
+                     }
+                  },
+                  {
+                     &quot;match&quot;: {
+                        &quot;user.last&quot;: &quot;Smith&quot;
+                     }
+                  }
+               ]
+            }
+         }
+      }
+   }
+}</code></pre></div>
+
+<h2 id="toc_13">Search</h2>
+
+<h3 id="toc_14">match query with <code>type</code></h3>
+
+<div><pre><code class="language-none">GET top_rated_movies/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;title&quot;: {
+        &quot;operator&quot;: &quot;and&quot;, 
+        &quot;query&quot;: &quot;howl&#39;s castle&quot;
+      }
+    }
+  },
+  &quot;size&quot;: 50
+}
+
+# unable to find by using phrase match
+GET top_rated_movies/_search
+{
+  &quot;query&quot;: {
+    &quot;match_phrase&quot;: {
+      &quot;title&quot;: &quot;howl&#39;s castle&quot;
+    }
+  }
+}
+
+GET top_rated_movies/_search
+{
+  &quot;query&quot;: {
+    &quot;match_phrase&quot;: {
+      &quot;title&quot;: &quot;howl&#39;s moving castle&quot;
+    }
+  }
+}
+
+GET top_rated_movies/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;title&quot;: {
+        &quot;operator&quot;: &quot;or&quot;, 
+        &quot;query&quot;: &quot;howl&#39;s castle apple macbook&quot;,
+        &quot;minimum_should_match&quot;: 3
+      }
+    }
+  },
+  &quot;size&quot;: 50
+}
+
+GET chinese/_search
+{
+  &quot;query&quot;: {
+    &quot;match_phrase&quot;: {
+      &quot;body&quot;: &quot;蔡英文&quot;
+    }
+  },
+  &quot;size&quot;: 50
+}</code></pre></div>
+
+<h3 id="toc_15">range query</h3>
+
+<div><pre><code class="language-none">PUT test_date/test/1
+{
+  &quot;time&quot;: &quot;2017-03-05T23:12:13&quot;
+}
+
+PUT test_date/test/2
+{
+  &quot;time&quot;: &quot;2017-03-05&quot;
+}
+
+PUT test_date/test/3
+{
+  &quot;time&quot;: &quot;2017-03-05T00:00:00&quot;
+}
+
+GET test_date/_mapping/test
+
+GET test_date/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;range&quot;: {
+          &quot;time&quot;: {
+            &quot;lt&quot;: &quot;now+1d&quot;
+          }
+        }
+      }
+    }
+  }
+}
+
+GET test_date/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;range&quot;: {
+          &quot;time&quot;: {
+            &quot;gt&quot;: &quot;now/d&quot;,
+            &quot;lt&quot;: &quot;now+1d&quot;,
+            &quot;time_zone&quot;: &quot;+0800&quot;
+          }
+        }
+      }
+    }
+  }
+}
+
+GET test_date/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;range&quot;: {
+          &quot;time&quot;: {
+            &quot;lt&quot;: &quot;2018-03-05&quot;,
+            &quot;time_zone&quot;: &quot;+0800&quot;
+          }
+        }
+      }
+    }
+  }
+}</code></pre></div>
+
+<h3 id="toc_16">fuzzy query</h3>
+
+<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+{
+    &quot;query&quot;: {
+       &quot;fuzzy&quot; : { 
+        &quot;title&quot; : {
+          &quot;value&quot;: &quot;kastla&quot;,
+          &quot;fuzziness&quot;: 2
+        }
+      }
+  }
+}</code></pre></div>
+
+<h3 id="toc_17">field collapse</h3>
+
+<div><pre><code class="language-none">GET /shakespeare/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;type&quot;: &quot;line&quot;
+    }
+  },
+  &quot;profile&quot;: true,
+  &quot;collapse&quot;: {
+    &quot;field&quot;: &quot;speaker&quot;,
+    &quot;inner_hits&quot;: {
+      &quot;name&quot;: &quot;speaker_group&quot;,
+      &quot;size&quot;: 3,
+      &quot;sort&quot;: [{ &quot;line_id&quot;: &quot;asc&quot; }]
+    }
+  },
+  &quot;sort&quot;: [{ &quot;line_id&quot;: &quot;desc&quot; }]
+}
+</code></pre></div>
+
+<h2 id="toc_18">Aggregation</h2>
+
+<h3 id="toc_19">Set return size</h3>
+
+<div><pre><code class="language-none">GET shakespeare/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;type&quot;: &quot;line&quot;
+        }
+      }
+    }
+  },
+  &quot;aggs&quot;: {
+    &quot;speaker&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;speaker&quot;
+      }
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  &quot;size&quot;: 0, 
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;type&quot;: &quot;line&quot;
+        }
+      }
+    }
+  },
+  &quot;aggs&quot;: {
+    &quot;speaker&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;speaker&quot;
+      }
+    }
+  }
+}</code></pre></div>
+
+<h3 id="toc_20">Term Aggregation</h3>
+
+<p>Attention: doc size is not always accurate
+ - doc<em>count</em>error<em>upper</em>bound
+ - sum<em>other</em>doc_count</p>
+
+<div><pre><code class="language-none">GET shakespeare/_search
+{
+  &quot;size&quot;: 0,
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;type&quot;: &quot;line&quot;
+        }
+      }
+    }
+  },
+  &quot;aggs&quot;: {
+    &quot;speaker&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;speaker&quot;
+      }
+    }
+  }
+}
+
+GET shakespeare/_search
+{
+  &quot;size&quot;: 0,
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;type&quot;: &quot;line&quot;
+        }
+      }
+    }
+  },
+  &quot;aggs&quot;: {
+    &quot;speaker&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;speaker&quot;,
+        &quot;size&quot;: 1000
+      }
+    }
+  }
+}</code></pre></div>
+
+<h3 id="toc_21">Nested Term Aggregation</h3>
+
+<div><pre><code class="language-none">GET shakespeare/_search
+{
+  &quot;size&quot;: 0,
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;filter&quot;: {
+        &quot;term&quot;: {
+          &quot;type&quot;: &quot;line&quot;
+        }
+      }
+    }
+  },
+  &quot;aggs&quot;: {
+    &quot;play_names&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;play_name&quot;,
+        &quot;size&quot;: 10
+      },
+      &quot;aggs&quot;: {
+        &quot;play_speaker&quot;: {
+          &quot;terms&quot;: {
+            &quot;field&quot;: &quot;speaker&quot;
+          }
+        }
+      }
+    }
+  }
+}</code></pre></div>
+
+<h3 id="toc_22">Date Range</h3>
+
+<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+{
+    &quot;size&quot;: 0,
+    &quot;aggs&quot;: {
+        &quot;range&quot;: {
+            &quot;date_range&quot;: {
+                &quot;field&quot;: &quot;release_date&quot;,
+                &quot;format&quot;: &quot;MM-yyy&quot;,
+                &quot;ranges&quot;: [
+                    { &quot;to&quot;: &quot;now-2y&quot; }, 
+                    { &quot;from&quot;: &quot;now-2y&quot; } 
+                ]
+            }
+        }
+    }
+}</code></pre></div>
+
+<h3 id="toc_23">Date Histogram</h3>
+
+<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+{
+    &quot;size&quot;: 0,
+    &quot;aggs&quot; : {
+        &quot;articles_over_time&quot; : {
+            &quot;date_histogram&quot; : {
+                &quot;field&quot; : &quot;release_date&quot;,
+                &quot;interval&quot; : &quot;year&quot;,
+                &quot;format&quot; : &quot;yyyy&quot; 
+            }
+        }
+    }
+}</code></pre></div>
+
+<h3 id="toc_24">Annual movies votes</h3>
+
+<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+{
+    &quot;size&quot; : 0,
+    &quot;aggs&quot; : {
+        &quot;movies_per_year&quot; : {
+            &quot;date_histogram&quot; : {
+                &quot;field&quot; : &quot;release_date&quot;,
+                &quot;interval&quot; : &quot;year&quot;,
+                &quot;format&quot;: &quot;yyyy&quot;
+            },
+            &quot;aggs&quot;: {
+                &quot;votes&quot;: {
+                    &quot;sum&quot;: {
+                        &quot;field&quot;: &quot;vote_count&quot;
+                    }
+                }
+            }
+        }
+    }
+}</code></pre></div>
+
+<h3 id="toc_25">Pipeline Aggregation - Annual movies votes + Average</h3>
+
+<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+{
+    &quot;size&quot; : 0,
+    &quot;aggs&quot; : {
+        &quot;movies_per_year&quot; : {
+            &quot;date_histogram&quot; : {
+                &quot;field&quot; : &quot;release_date&quot;,
+                &quot;interval&quot; : &quot;year&quot;,
+                &quot;format&quot;: &quot;yyyy&quot;
+            },
+            &quot;aggs&quot;: {
+                &quot;votes&quot;: {
+                    &quot;sum&quot;: {
+                        &quot;field&quot;: &quot;vote_count&quot;
+                    }
+                }
+            }
+        },
+        &quot;avg_annual_votes&quot;: {
+            &quot;avg_bucket&quot;: {
+                &quot;buckets_path&quot;: &quot;movies_per_year&gt;votes&quot; 
+            }
+        }
+    }
+}</code></pre></div>
+
+<h2 id="toc_26">DEBUG</h2>
+
+<div><pre><code class="language-none">GET movies/movie/1/_explain
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+           &quot;title&quot;: {
+               &quot;type&quot;: &quot;boolean&quot;,
+               &quot;query&quot;: &quot;Star Wars: Episode VII – The Force Awakens&quot;,
+               &quot;minimum_should_match&quot;: &quot;28%&quot;
+           }
+        }
+    }
+}
+</code></pre></div>
+
+<h2 id="toc_27">Others</h2>
+
+<div><pre><code class="language-none">GET /movies/_segments?pretty
+
+GET /courses/_settings
+
+GET /_nodes/process?pretty
+
+GET /_nodes/stats?pretty</code></pre></div>
+
+<h2 id="toc_28">ELK Example</h2>
+
+<h3 id="toc_29">Test Grok Pattern</h3>
+
+<div><pre><code class="language-none">64.242.88.10 - - [08/Mar/2004:00:27:53 -0800] &quot;GET /twiki/bin/view/TWiki/GoBox HTTP/1.1&quot; 200 3762</code></pre></div>
+
+<div><pre><code class="language-none">%{COMMONAPACHELOG}</code></pre></div>
+
+<div><pre><code class="language-none">joe 64.242.88.10 - - [08/Mar/2004:00:27:53 -0800] &quot;GET /twiki/bin/view/TWiki/GoBox HTTP/1.1&quot; 200 3762</code></pre></div>
+
+<div><pre><code class="language-none">%{USERNAME:username} %{COMMONAPACHELOG}</code></pre></div>
+
+<h2 id="toc_30">Sample Data</h2>
+
+<h3 id="toc_31">Movies (for cURL)</h3>
+
+<div><pre><code class="language-none">curl -XPUT &quot;localhost:9200/movies/_cat/4&quot; -d &quot;{\&quot;title\&quot;: \&quot;To Kill a Mockingbird\&quot;, \&quot;director\&quot;: \&quot;Robert Mulligan\&quot;, \&quot;year\&quot;: 1962, \&quot;genres\&quot;: [\&quot;Crime\&quot;, \&quot;Drama\&quot;, \&quot;Mystery\&quot;]}&quot;
+curl -XPUT &quot;localhost:9200/movies/_cat/5&quot; -d &quot;{\&quot;title\&quot;: \&quot;Apocalypse Now\&quot;, \&quot;director\&quot;: \&quot;Francis Ford Coppola\&quot;, \&quot;year\&quot;: 1979, \&quot;genres\&quot;: [\&quot;Drama\&quot;, \&quot;War\&quot;]}&quot;
+curl -XPUT &quot;localhost:9200/movies/_cat/6&quot; -d &quot;{\&quot;title\&quot;: \&quot;Kill Bill: Vol. 1\&quot;, \&quot;director\&quot;: \&quot;Quentin Tarantino\&quot;, \&quot;year\&quot;: 2003, \&quot;genres\&quot;: [\&quot;Action\&quot;, \&quot;Crime\&quot;, \&quot;Thriller\&quot;]}&quot;
+curl -XPUT &quot;localhost:9200/movies/_cat/7&quot; -d &quot;{\&quot;title\&quot;: \&quot;The Assassination of Jesse James by the Coward Robert Ford\&quot;, \&quot;director\&quot;: \&quot;Andrew Dominik\&quot;, \&quot;year\&quot;: 2007, \&quot;genres\&quot;: [\&quot;Biography\&quot;, \&quot;Crime\&quot;, \&quot;Drama\&quot;]}&quot;
+curl -XPUT &quot;localhost:9200/movies/_cat/8&quot; -d &quot;{\&quot;title\&quot;: \&quot;Interstellar\&quot;, \&quot;director\&quot;: \&quot;Christopher Nolan\&quot;, \&quot;year\&quot;: 2014, \&quot;genres\&quot;: [\&quot;Adventure\&quot;, \&quot;Sci-Fi\&quot;]}&quot;
+curl -XPUT &quot;localhost:9200/movies/_cat/9&quot; -d &quot;{\&quot;title\&quot;: \&quot;The Dark Knight\&quot;, \&quot;director\&quot;: \&quot;Christopher Nolan\&quot;,\&quot;year\&quot;: 2008,\&quot;genres\&quot;: [\&quot;Action\&quot;, \&quot;Crime\&quot;, \&quot;Drama\&quot;]}&quot;
+curl -XPUT &quot;localhost:9200/movies/_cat/10&quot; -d &quot;{\&quot;title\&quot;: \&quot;Lawrence of Arabia\&quot;, \&quot;director\&quot;: \&quot;David Lean\&quot;, \&quot;year\&quot;: 1962, \&quot;genres\&quot;: [\&quot;Adventure\&quot;, \&quot;Biography\&quot;, \&quot;Drama\&quot;]}&quot;
+</code></pre></div>
+
+<h3 id="toc_32">Movies (for Kibana Dev Tools)</h3>
+
+<div><pre><code class="language-none">PUT movies/_doc/1
+{&quot;title&quot;:&quot;Star Wars: Episode VII – The Force Awakens&quot;,&quot;director&quot;:&quot;J.J. Abrams&quot;,&quot;year&quot;:2015,&quot;genres&quot;:[&quot;Action&quot;,&quot;Adventure&quot;,&quot;Fantasy&quot;]}
+
+PUT movies/_doc/2
+{&quot;title&quot;:&quot;The Godfather&quot;,&quot;director&quot;:&quot;Francis Ford Coppola&quot;,&quot;year&quot;:1972,&quot;genres&quot;:[&quot;Crime&quot;,&quot;Drama&quot;]}
+
+PUT movies/_doc/3
+{&quot;title&quot;:&quot;Kill Bill: Vol. 1&quot;,&quot;director&quot;:&quot;Quentin Tarantino&quot;,&quot;year&quot;:2003,&quot;genres&quot;:[&quot;Action&quot;,&quot;Crime&quot;,&quot;Thriller&quot;]}
+
+PUT movies/_doc/4
+{&quot;title&quot;:&quot;To Kill a Mockingbird&quot;,&quot;director&quot;:&quot;Robert Mulligan&quot;,&quot;year&quot;:1962,&quot;genres&quot;:[&quot;Crime&quot;,&quot;Drama&quot;,&quot;Mystery&quot;]}
+
+PUT movies/_doc/5
+{&quot;title&quot;:&quot;Apocalypse Now&quot;,&quot;director&quot;:&quot;Francis Ford Coppola&quot;,&quot;year&quot;:1979,&quot;genres&quot;:[&quot;Drama&quot;,&quot;War&quot;]}
+
+PUT movies/_doc/6
+{&quot;title&quot;:&quot;Kill Bill: Vol. 1&quot;,&quot;director&quot;:&quot;Quentin Tarantino&quot;,&quot;year&quot;:2003,&quot;genres&quot;:[&quot;Action&quot;,&quot;Crime&quot;,&quot;Thriller&quot;]}
+
+PUT movies/_doc/7
+{&quot;title&quot;:&quot;The Assassination of Jesse James by the Coward Robert Ford&quot;,&quot;director&quot;:&quot;Andrew Dominik&quot;,&quot;year&quot;:2007,&quot;genres&quot;:[&quot;Biography&quot;,&quot;Crime&quot;,&quot;Drama&quot;]}
+
+PUT movies/_doc/8
+{&quot;title&quot;:&quot;Interstellar&quot;,&quot;director&quot;:&quot;Christopher Nolan&quot;,&quot;year&quot;:2014,&quot;genres&quot;:[&quot;Adventure&quot;,&quot;Sci-Fi&quot;]}
+
+PUT movies/_doc/9
+{&quot;title&quot;:&quot;The Dark Knight&quot;,&quot;director&quot;:&quot;Christopher Nolan&quot;,&quot;year&quot;:2008,&quot;genres&quot;:[&quot;Action&quot;,&quot;Crime&quot;,&quot;Drama&quot;]}
+
+PUT movies/_doc/10
+{&quot;title&quot;:&quot;Lawrence of Arabia&quot;,&quot;director&quot;:&quot;David Lean&quot;,&quot;year&quot;:1962,&quot;genres&quot;:[&quot;Adventure&quot;,&quot;Biography&quot;,&quot;Drama&quot;]}</code></pre></div>
+
+
+</body>
+
+</html>
+

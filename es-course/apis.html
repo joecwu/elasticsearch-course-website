@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elasticsearch訓練課程</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sticky-footer.css" rel="stylesheet">
+    <style type="text/css">
+      body { padding-top: 70px; }
+    </style>
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+      <div class="row">
+      <div class="col-lg-offset-1 col-lg-10 ">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Elasticsearch課程</a>
+        </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">章節 <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="tutorial.html">1. Elasticsearch基本操作</a></li>
+            <li><a href="#">2. Elasticsearch Document APIs</a></li>
+            <li><a href="mapping-search.html">3. Elasticsearch Mapping與Search搭配</a></li>
+            <li><a href="elk.html">4. ELK stack建置</a></li>
+            <li><a href="#">5. ELK stack進階(建構中)</a></li>
+            <li><a href="datasets.html">Appendix A. Datasets</a></li>
+            <li><a href="resources.html">Appendix B. Resources</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+      </div><!-- /.navbar-collapse -->
+      </div>
+      </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <div class="page-header">
+            <h1>2. Elasticsearch Document APIs</h1>
+          </div>
+        </div>           
+      </div>      
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>2.1 Create Index API</h2>
+          <h3>練習</h3>
+          <p>建立一個符合下列條件的index：
+            <ul>
+              <li>Index名稱為<code>blogs</code>，含有一個名為<code>article</code>的type</li>
+              <li>Index設定值<code>number_of_shards</code>為1，<code>number_of_replicas</code>為0</li>
+              <li><code>article</code>中含有四個欄位：<code>author</code>、<code>title</code>與<code>content</code>皆為字串，<code>post_time</code>為日期</li>
+            </ul>
+          </p>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2_1" aria-expanded="true" aria-controls="collapseOne"><span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span></a>
+                </h4>
+              </div>
+              <div id="collapse2_1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XPOST localhost:9200/blogs -d '{
+    "settings" : {
+        "number_of_shards" : 1,
+        "number_of_replicas" : 0
+    },
+    "mappings" : {
+        "article" : {
+            "properties" : {
+                "author" : { "type" : "string"},
+                "title" : { "type" : "string"},
+                "content" : { "type" : "string"},
+                "post_date" : { "type" : "date"}
+            }
+        }
+    }
+}'</strong>
+{"acknowledged":true}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+              <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html" target="_blank">Elasticsearch Create Index API</a>
+            </li>
+          </ul>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>2.2 Bulk API</h2>
+          <h3>練習</h3>
+          <p>請以Bulk API執行下列動作，執行完畢後<code>blogs</code> index中應有4份documents：
+            <pre>
+{"index": {"_index": "blogs", "_type": "article"}}
+{"author": "Prateek Gupta", "title": "Strategies for Reducing Your Amazon EMR Costs", "content": "BloomReach has built a personalized discovery platform with applications for organic search, site search, content marketing and merchandizing. BloomReach ingests data from a variety of sources such as merchant inventory feed, sitefetch data from merchants’ websites and pixel data. The data is collected, parsed, stored and used to match user intent to content on merchants’ websites and to provide merchants with insights into consumer behavior and the performance of products on their sites.", "post_date": "2015-01-15"}
+{"index": {"_index": "blogs", "_type": "article"}}
+{"author": "Ian Meyers", "title": "Node.js Streaming MapReduce with Amazon EMR", "content": "Node.js is a JavaScript framework for running high performance server-side applications based upon non-blocking I/O and an asynchronous, event-driven processing model.", "post_date": "2015-01-09"}
+{"index": {"_index": "blogs", "_type": "article"}}
+{"author": "K Young", "title": "Building and Running a Recommendation Engine at Any Scale", "content": "Most of us have experienced the power of personalized recommendations firsthand. Maybe you found former colleagues and classmates with LinkedIn’s “People You May Know” feature. Perhaps you watched a movie because Netflix suggested it to you. And you’ve most likely bought something that Amazon recommended under \"Frequently Bought Together\" or \"Customers Who Bought This.\" Recommendation engines account for a huge share of revenue and user activity, often 30 to 50 percent, at those companies and countless others.", "post_date": "2014-12-15"}
+{"index": {"_index": "blogs", "_type": "article"}}
+{"author": "Wangechi Doble", "title": "Getting HBase Running on Amazon EMR and Connecting it to Amazon Kinesis", "content": "Apache HBase is an open-source, column-oriented, distributed NoSQL database that runs on the Apache Hadoop framework. In the AWS Cloud, you can choose to deploy Apache HBase on Amazon Elastic Cloud Compute (Amazon EC2) and manage it yourself or leverage Apache HBase as a managed service on Amazon Elastic MapReduce (Amazon EMR).  Amazon EMR is a fully managed, hosted Hadoop framework on top of Amazon EC2. This post shows you how to launch an Apache HBase cluster on Amazon EMR using the AWS SDK for Java and how to extend the Amazon Kinesis Connector Library to stream data in real-time to HBase running on an Amazon EMR cluster.  Amazon Kinesis is a fully managed service for real-time processing of streaming big data.", "post_date": "2014-12-12"}
+            </pre>
+          </p>          
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+              <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-bulk.html" target="_blank">Elasticsearch Bulk API</a>
+            </li>
+          </ul>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>2.3 Search API</h2>          
+          <h3>練習</h3>
+          <p>以Search API配合match query與range filter，找出文章<strong>標題</strong>中包含<strong>amazon與emr</strong>等關鍵字，且發表日期在2015年之後的文章，搜尋結果亦須依發表日期從最近開始排序。</p>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2_3" aria-expanded="true" aria-controls="collapseOne">
+                    <span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span>
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse2_3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XPOST http://localhost:9200/blogs/_search?pretty -d '{
+    "sort": [
+        {"post_date": {"order": "desc"}}
+    ],
+    "query": {
+        "bool": {
+            "must": {
+                "match": {
+                    "title": {
+                        "query": "amazon emr",
+                        "operator": "and"
+                    }
+                }                
+            },
+            "filter": {
+                "range" : {
+                    "post_date" : {
+                        "gte": "2015-01-01"
+                    }
+                }
+            }
+        }
+    }  
+}'</strong></pre>
+                  <p>搜尋結果：</p>
+                  <pre>{
+   "took": 242,
+   "timed_out": false,
+   "_shards":
+   {
+       "total": 1,
+       "successful": 1,
+       "failed": 0
+   },
+   "hits":
+   {
+       "total": 2,
+       "max_score": null,
+       "hits":
+       [
+           {
+               "_index": "blogs",
+               "_type": "article",
+               "_id": "AUs7lBcZfdWaTSTsiL_n",
+               "_score": null,
+               "_source":
+               {
+                   "author": "Prateek Gupta",
+                   "title": "Strategies for Reducing Your Amazon EMR Costs",
+                   "content": "BloomReach has built a personalized discovery platform with applications for organic search, site search, content marketing and merchandizing. BloomReach ingests data from a variety of sources such as merchant inventory feed, sitefetch data from merchants’ websites and pixel data. The data is collected, parsed, stored and used to match user intent to content on merchants’ websites and to provide merchants with insights into consumer behavior and the performance of products on their sites.",
+                   "post_date": "2015-01-15"
+               },
+               "sort":
+               [
+                   1421280000000
+               ]
+           },
+           {
+               "_index": "blogs",
+               "_type": "article",
+               "_id": "AUs7l7_TfdWaTSTsiL_o",
+               "_score": null,
+               "_source":
+               {
+                   "author": "Ian Meyers",
+                   "title": "Node.js Streaming MapReduce with Amazon EMR",
+                   "content": "Node.js is a JavaScript framework for running high performance server-side applications based upon non-blocking I/O and an asynchronous, event-driven processing model.",
+                   "post_date": "2015-01-09"
+               },
+               "sort":
+               [
+                   1420761600000
+               ]
+           }
+       ]
+   }
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+                <a href="http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-filtered-query.html" target="_blank">Elasticsearch Filtered Query</a>
+            </li>
+            <li>
+              <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-body.html" target="_blank">Elasticsearch Search API: Request Search Body</a>
+            </li>
+            <li>
+  		        <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-match-query.html" target="_blank">Elasticsearch Match Query</a>
+  	        </li>
+            <li>
+                <a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-range-filter.html" target="_blank">Elasticsearch Range Filter</a>
+            </li>
+          </ul>  
+        </div>  
+      </div>          
+
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>2.4 Force Merge API</h2>
+          <h3>練習</h3>
+          <p>Force Merge <code>blogs</code> index，使其segment file數為1，並進行確認。</p>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2_4" aria-expanded="true" aria-controls="collapseOne"><span class="text-primary"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> 檢視答案</span></a>
+                </h4>
+              </div>
+              <div id="collapse2_4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <pre>$ curl <strong>-XPOST 'localhost:9200/blogs/_forcemerge?max_num_segments=1&pretty'</strong>
+{"_shards":{"total":1,"successful":1,"failed":0}}
+
+$ curl <strong>-XGET 'localhost:9200/blogs/_segments?pretty'</strong>
+{
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "indices" : {
+    "blogs" : {
+      "shards" : {
+        "0" : [ {
+          "routing" : {
+            "state" : "STARTED",
+            "primary" : true,
+            "node" : "QWscs4LUSiGmxSUqqy4eNw"
+          },
+          "num_committed_segments" : 1,
+          "num_search_segments" : 1,
+          "segments" : {
+            "_3" : {
+              "generation" : 3,
+              "num_docs" : 4,
+              "deleted_docs" : 0,
+              "size_in_bytes" : 10715,
+              "memory_in_bytes" : 8426,
+              "committed" : true,
+              "search" : true,
+              "version" : "4.10.2",
+              "compound" : false
+            }
+          }
+        } ]
+      }
+    }
+  }
+}
+</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>參考資料</h3>
+          <ul>
+            <li>
+              <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-forcemerge.html" target="_blank">Elasticsearch Force Merge API</a>
+            </li>
+            <li>
+              <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-segments.html" target="_blank">Elasticsearch Segments API</a>
+            </li>
+          </ul>
+        </div>  
+      </div>
+    </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-offset-1 col-lg-10 ">
+            <a href="apis.html#">回到最前面</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
