@@ -779,7 +779,7 @@ PUT /courses
         }
     },
     &quot;mappings&quot;: {
-        &quot;topic&quot;: {
+        &quot;_doc&quot;: {
             &quot;properties&quot;: {
                 &quot;title&quot;: {
                     &quot;type&quot;: &quot;text&quot;,
@@ -793,15 +793,75 @@ PUT /courses
 }
 
 #Deprecated since 6.0
-GET /courses/_analyze?field=topic.title&amp;text=test for customized analyzer
+GET /courses/_analyze?field=_doc.title&amp;text=test for customized analyzer
 
 POST /courses/_analyze
 {
-  &quot;field&quot;: &quot;topic.title&quot;, 
+  &quot;field&quot;: &quot;title&quot;, 
   &quot;text&quot;: &quot;test for customized analyzer&quot;
 }
 
+# Update Existing Index Setting &amp; edgeNGram test
+POST /courses/_close
+PUT /courses/_settings
+{
+  &quot;settings&quot;: {
+    &quot;index&quot;: {
+      &quot;analysis&quot;: {
+        &quot;analyzer&quot;: {
+          &quot;custom_analyzer&quot;: {
+            &quot;tokenizer&quot;: &quot;lowercase&quot;,
+            &quot;filter&quot;: [
+              &quot;lowercase&quot;,
+              &quot;stop&quot;,
+              &quot;snowball&quot;
+            ]
+          },
+          &quot;suggester&quot;: {
+            &quot;tokenizer&quot;: &quot;lowercase&quot;,
+            &quot;filter&quot;: [ &quot;4edgeNGram&quot;
+            ]
+          }
+        },
+        &quot;filter&quot;: {
+          &quot;4edgeNGram&quot;: {
+            &quot;type&quot;: &quot;edgeNGram&quot;,
+            &quot;min_gram&quot;: 2,
+            &quot;max_gram&quot;: 5
+          }
+        }
+      }
+    }
+  },
+  &quot;mappings&quot;: {
+    &quot;_doc&quot;: {
+      &quot;properties&quot;: {
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;text&quot;,
+          &quot;store&quot;: true,
+          &quot;index&quot;: true,
+          &quot;analyzer&quot;: &quot;custom_analyzer&quot;
+        }
+      }
+    }
+  }
+}
+POST /courses/_open
+
+POST courses/_analyze
+{
+  &quot;text&quot;: &quot;test for customized analyzer&quot;,
+  &quot;analyzer&quot;: &quot;suggester&quot;
+}
+
+
 # Dev Tools HTTP GET w/ 中文 會有問題
+POST _analyze
+{
+  &quot;tokenizer&quot;: &quot;standard&quot;, 
+  &quot;text&quot;: &quot;蔡英文&quot;
+}
+
 POST _analyze
 {
   &quot;tokenizer&quot;: &quot;icu_tokenizer&quot;, 
@@ -823,7 +883,7 @@ POST /_analyze
 PUT /chinese
 {
     &quot;mappings&quot;: {
-        &quot;smartcn&quot;: {
+        &quot;_doc&quot;: {
             &quot;properties&quot;: {
                 &quot;title&quot;: {
                     &quot;type&quot;: &quot;text&quot;,
@@ -889,6 +949,66 @@ POST /chinese/_search
     }
   }
 }
+
+#pinyin 拼音plugin
+
+PUT /medcl/ 
+{
+    &quot;index&quot; : {
+        &quot;analysis&quot; : {
+            &quot;analyzer&quot; : {
+                &quot;pinyin_analyzer&quot; : {
+                    &quot;tokenizer&quot; : &quot;my_pinyin&quot;
+                    }
+            },
+            &quot;tokenizer&quot; : {
+                &quot;my_pinyin&quot; : {
+                    &quot;type&quot; : &quot;pinyin&quot;,
+                    &quot;keep_separate_first_letter&quot; : false,
+                    &quot;keep_full_pinyin&quot; : true,
+                    &quot;keep_original&quot; : true,
+                    &quot;limit_first_letter_length&quot; : 16,
+                    &quot;lowercase&quot; : true,
+                    &quot;remove_duplicated_term&quot; : true
+                }
+            }
+        }
+    }
+}
+
+POST /medcl/_analyze
+{
+  &quot;analyzer&quot;: &quot;pinyin_analyzer&quot;,
+  &quot;text&quot;: &quot;蔡英文&quot;
+}
+
+POST /medcl/_analyze
+{
+  &quot;analyzer&quot;: &quot;pinyin_analyzer&quot;,
+  &quot;text&quot;: &quot;菜英文&quot;
+}
+
+# IK Analyzer Install
+
+Visit https://github.com/medcl/elasticsearch-analysis-ik/releases
+copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
+
+bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
+
+# 設定字典檔 https://github.com/medcl/elasticsearch-analysis-ik#dictionary-configuration
+
+add custom.dic(裡面可以放自訂的自詞，一行一個字) file under {conf}/analysis-ik/config/
+
+修改 {conf}/analysis-ik/config/IKAnalyzer.cfg.xml 加上 custom.dic 在 ext_dict 裡面
+&lt;entry key=&quot;ext_dict&quot;&gt;custom.dic&lt;/entry&gt;
+
+重新啟動elasticsearch
+
+POST _analyze
+{
+  &quot;analyzer&quot;: &quot;ik_smart&quot;,
+  &quot;text&quot;: &quot;蔡英文跟柯文哲去基隆廟口夜市吃宵夜&quot;
+}
 </code></pre></div>
 
 <h2 id="toc_8">Mapping</h2>
@@ -903,7 +1023,7 @@ PUT /my_index
     &quot;refresh_interval&quot;: &quot;1s&quot;
   },
   &quot;mappings&quot;: {
-    &quot;my_type&quot;: {
+    &quot;_doc&quot;: {
       &quot;_source&quot;: {
         &quot;enabled&quot;: false
       },
@@ -930,7 +1050,7 @@ PUT /my_index
     &quot;refresh_interval&quot;: &quot;1s&quot;
   },
   &quot;mappings&quot;: {
-    &quot;my_type&quot;: {
+    &quot;_doc&quot;: {
       &quot;_source&quot;: {
         &quot;enabled&quot;: true,
         &quot;excludes&quot;: [&quot;content&quot;]
@@ -950,14 +1070,14 @@ PUT /my_index
   }
 }
 
-PUT /my_index/my_type/1
+PUT /my_index/_doc/1
 {
   &quot;title&quot;:   &quot;Some short title&quot;,
   &quot;date&quot;:    &quot;2015-01-01&quot;,
   &quot;content&quot;: &quot;A very long content field...&quot;
 }
 
-GET /my_index/my_type/1
+GET /my_index/_doc/1
 
 GET my_index/_search
 {
@@ -1003,7 +1123,6 @@ GET /copy_to/test/_search</code></pre></div>
     &quot;test&quot;: {
       &quot;properties&quot;: {
         &quot;text&quot;: {
-          &quot;store&quot;: &quot;no&quot;, 
           &quot;type&quot;:        &quot;text&quot;,
           &quot;term_vector&quot;: &quot;with_positions_offsets&quot;
         }
@@ -1265,6 +1384,24 @@ GET test_date/_search
           &quot;fuzziness&quot;: 2
         }
       }
+  }
+}
+
+PUT fuzzy_test/_doc/1
+{
+  &quot;product_name&quot;: &quot;facebook&quot;
+}
+
+POST fuzzy_test/_search
+{
+  &quot;query&quot;: {
+    &quot;fuzzy&quot;: {
+      &quot;product_name&quot;: {
+        &quot;value&quot;: &quot;macbook&quot;,
+        &quot;prefix_length&quot;: 0,
+        &quot;fuzziness&quot;: 2
+      }
+    }
   }
 }</code></pre></div>
 
@@ -1588,4 +1725,3 @@ PUT movies/_doc/10
 </body>
 
 </html>
-
