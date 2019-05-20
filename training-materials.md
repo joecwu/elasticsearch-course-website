@@ -56,8 +56,6 @@ DELETE /movies/_doc/1
 ```
 GET /movies/_search
 
-GET /movies/_doc/_search
-
 POST _search
 {
   "query": {
@@ -72,7 +70,7 @@ POST /movies/_search
   }
 }
 
-POST /movies/_doc/_search
+POST /movies/_search
 {
   "query": {
     "match_all": {}
@@ -189,29 +187,25 @@ POST _search
   }
 }
 
-POST /movies/_doc/_mapping
+POST /movies/_mapping
 {
-  "_doc": {
-    "properties": {
-      "director": {
-        "type": "keyword"
-      }
+  "properties": {
+    "director": {
+      "type": "keyword"
     }
   }
 }
 
-POST /movies/_doc/_mapping
+POST /movies/_mapping
 {
-   "_doc": {
-      "properties": {
-         "director": {
-            "type": "text",
-            "fields": {
-                "original": {"type": "keyword"} 
-            }
-         }
-      }
-   }
+  "properties": {
+     "director": {
+        "type": "text",
+        "fields": {
+            "original": {"type": "keyword"} 
+        }
+     }
+  }
 }
 
 PUT /movies/_doc/1
@@ -222,7 +216,7 @@ PUT /movies/_doc/1
   "genres": ["Action", "Adventure", "Fantasy"]
 }
 
-POST /movies/_doc/_search
+POST /movies/_search
 {
   "query": {
     "term": {
@@ -232,7 +226,7 @@ POST /movies/_doc/_search
 }
 
 # Since 5.0 _default_ mapping for string has keyword field.
-GET /movies/_doc/_mapping
+GET /movies/_mapping
 
 ```
 
@@ -307,7 +301,7 @@ POST /movies/_delete_by_query
 
 # Update API
 
-POST /movies/_doc/1/_update
+POST /movies/_update/1
 {
   "doc":{
     "likes": 123
@@ -468,30 +462,32 @@ POST /_analyze
 
 PUT /courses
 {
-    "settings": {
-        "index": {
-            "analysis": {
-                "analyzer": {
-                    "custom_analyzer": {
-                        "tokenizer": "lowercase",
-                        "filter": ["lowercase", "stop", "snowball"]
-                    }
-                }
-            }
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "custom_analyzer": {
+            "tokenizer": "lowercase",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball"
+            ]
+          }
         }
-    },
-    "mappings": {
-        "_doc": {
-            "properties": {
-                "title": {
-                    "type": "text",
-                    "store": true,
-                    "index": true,
-                    "analyzer": "custom_analyzer"
-                }
-            }
-        }
+      }
     }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "store": true,
+        "index": true,
+        "analyzer": "custom_analyzer"
+      }
+    }
+  }
 }
 
 #Deprecated since 6.0
@@ -521,7 +517,8 @@ PUT /courses/_settings
           },
           "suggester": {
             "tokenizer": "lowercase",
-            "filter": [ "4edgeNGram"
+            "filter": [
+              "4edgeNGram"
             ]
           }
         },
@@ -536,14 +533,12 @@ PUT /courses/_settings
     }
   },
   "mappings": {
-    "_doc": {
-      "properties": {
-        "title": {
-          "type": "text",
-          "store": true,
-          "index": true,
-          "analyzer": "custom_analyzer"
-        }
+    "properties": {
+      "title": {
+        "type": "text",
+        "store": true,
+        "index": true,
+        "analyzer": "custom_analyzer"
       }
     }
   }
@@ -584,24 +579,22 @@ POST /_analyze
 
 PUT /chinese
 {
-    "mappings": {
-        "_doc": {
-            "properties": {
-                "title": {
-                    "type": "text",
-                    "store": true,
-                    "index": true,
-                    "analyzer": "smartcn"
-                },
-                "body": {
-                    "type": "text",
-                    "store": true,
-                    "index": true,
-                    "analyzer": "smartcn"
-                }
-            }
-        }
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "store": true,
+        "index": true,
+        "analyzer": "smartcn"
+      },
+      "body": {
+        "type": "text",
+        "store": true,
+        "index": true,
+        "analyzer": "smartcn"
+      }
     }
+  }
 }
 
 PUT /chinese/_doc/1
@@ -693,18 +686,18 @@ POST /medcl/_analyze
 # IK Analyzer Install
 
 Visit https://github.com/medcl/elasticsearch-analysis-ik/releases
-copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
+copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.0.1.zip
 
-bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
+bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.0.1.zip
 
-# 設定字典檔 https://github.com/medcl/elasticsearch-analysis-ik#dictionary-configuration
+## 設定字典檔 https://github.com/medcl/elasticsearch-analysis-ik#dictionary-configuration
 
 add custom.dic(裡面可以放自訂的自詞，一行一個字) file under {conf}/analysis-ik/config/
 
 修改 {conf}/analysis-ik/config/IKAnalyzer.cfg.xml 加上 custom.dic 在 ext_dict 裡面
 <entry key="ext_dict">custom.dic</entry>
 
-重新啟動elasticsearch
+## 重新啟動elasticsearch
 
 POST _analyze
 {
@@ -726,22 +719,20 @@ PUT /my_index
     "refresh_interval": "1s"
   },
   "mappings": {
-    "_doc": {
-      "_source": {
-        "enabled": false
+    "_source": {
+      "enabled": false
+    },
+    "properties": {
+      "title": {
+        "type": "text",
+        "store": true
       },
-      "properties": {
-        "title": {
-          "type": "text",
-          "store": true
-        },
-        "date": {
-          "type": "date",
-          "store": true
-        },
-        "content": {
-          "type": "text"
-        }
+      "date": {
+        "type": "date",
+        "store": true
+      },
+      "content": {
+        "type": "text"
       }
     }
   }
@@ -753,21 +744,19 @@ PUT /my_index
     "refresh_interval": "1s"
   },
   "mappings": {
-    "_doc": {
-      "_source": {
-        "enabled": true,
-        "excludes": ["content"]
+    "_source": {
+      "enabled": true,
+      "excludes": ["content"]
+    },
+    "properties": {
+      "title": {
+        "type": "text"
       },
-      "properties": {
-        "title": {
-          "type": "text"
-        },
-        "date": {
-          "type": "date"
-        },
-        "content": {
-          "type": "text"
-        }
+      "date": {
+        "type": "date"
+      },
+      "content": {
+        "type": "text"
       }
     }
   }
@@ -793,19 +782,17 @@ GET my_index/_search
 PUT /copy_to
 {
   "mappings": {
-    "_doc": {
-      "properties": {
-        "first_name": {
-          "type": "text",
-          "copy_to": "full_name" 
-        },
-        "last_name": {
-          "type": "text",
-          "copy_to": "full_name" 
-        },
-        "full_name": {
-          "type": "text"
-        }
+    "properties": {
+      "first_name": {
+        "type": "text",
+        "copy_to": "full_name" 
+      },
+      "last_name": {
+        "type": "text",
+        "copy_to": "full_name" 
+      },
+      "full_name": {
+        "type": "text"
       }
     }
   }
@@ -825,12 +812,10 @@ GET /copy_to/_doc/_search
 PUT term_vector
 {
   "mappings": {
-    "_doc": {
-      "properties": {
-        "text": {
-          "type":        "text",
-          "term_vector": "with_positions_offsets"
-        }
+    "properties": {
+      "text": {
+        "type":        "text",
+        "term_vector": "with_positions_offsets"
       }
     }
   }
@@ -1086,7 +1071,7 @@ GET test_date/_search
 
 ### fuzzy query
 ```
-GET top_rated_movies/_doc/_search
+GET top_rated_movies/_search
 {
     "query": {
        "fuzzy" : { 
@@ -1270,7 +1255,7 @@ GET shakespeare/_search
 
 ### Date Range
 ```
-GET top_rated_movies/_doc/_search
+GET top_rated_movies/_search
 {
     "size": 0,
     "aggs": {
@@ -1291,7 +1276,7 @@ GET top_rated_movies/_doc/_search
 
 ### Date Histogram
 ```
-GET top_rated_movies/_doc/_search
+GET top_rated_movies/_search
 {
     "size": 0,
     "aggs" : {
@@ -1308,7 +1293,7 @@ GET top_rated_movies/_doc/_search
 
 ### Annual movies votes
 ```
-GET top_rated_movies/_doc/_search
+GET top_rated_movies/_search
 {
     "size" : 0,
     "aggs" : {
@@ -1332,7 +1317,7 @@ GET top_rated_movies/_doc/_search
 
 ### Pipeline Aggregation - Annual movies votes + Average
 ```
-GET top_rated_movies/_doc/_search
+GET top_rated_movies/_search
 {
     "size" : 0,
     "aggs" : {

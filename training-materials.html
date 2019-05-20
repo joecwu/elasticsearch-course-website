@@ -2,7 +2,6 @@
 
 <head>
 <meta charset="utf-8">
-<title>ElasticsearchTrainingMaterials</title>
 <style type="text/css">
 body {
   font-family: Helvetica, arial, sans-serif;
@@ -359,8 +358,6 @@ DELETE /movies/_doc/1</code></pre></div>
 
 <div><pre><code class="language-none">GET /movies/_search
 
-GET /movies/_doc/_search
-
 POST _search
 {
   &quot;query&quot;: {
@@ -375,7 +372,7 @@ POST /movies/_search
   }
 }
 
-POST /movies/_doc/_search
+POST /movies/_search
 {
   &quot;query&quot;: {
     &quot;match_all&quot;: {}
@@ -490,29 +487,25 @@ POST _search
   }
 }
 
-POST /movies/_doc/_mapping
+POST /movies/_mapping
 {
-  &quot;_doc&quot;: {
-    &quot;properties&quot;: {
-      &quot;director&quot;: {
-        &quot;type&quot;: &quot;keyword&quot;
-      }
+  &quot;properties&quot;: {
+    &quot;director&quot;: {
+      &quot;type&quot;: &quot;keyword&quot;
     }
   }
 }
 
-POST /movies/_doc/_mapping
+POST /movies/_mapping
 {
-   &quot;_doc&quot;: {
-      &quot;properties&quot;: {
-         &quot;director&quot;: {
-            &quot;type&quot;: &quot;text&quot;,
-            &quot;fields&quot;: {
-                &quot;original&quot;: {&quot;type&quot;: &quot;keyword&quot;} 
-            }
-         }
-      }
-   }
+  &quot;properties&quot;: {
+     &quot;director&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;fields&quot;: {
+            &quot;original&quot;: {&quot;type&quot;: &quot;keyword&quot;} 
+        }
+     }
+  }
 }
 
 PUT /movies/_doc/1
@@ -523,7 +516,7 @@ PUT /movies/_doc/1
   &quot;genres&quot;: [&quot;Action&quot;, &quot;Adventure&quot;, &quot;Fantasy&quot;]
 }
 
-POST /movies/_doc/_search
+POST /movies/_search
 {
   &quot;query&quot;: {
     &quot;term&quot;: {
@@ -533,7 +526,7 @@ POST /movies/_doc/_search
 }
 
 # Since 5.0 _default_ mapping for string has keyword field.
-GET /movies/_doc/_mapping
+GET /movies/_mapping
 </code></pre></div>
 
 <h2 id="toc_4">Data in/out</h2>
@@ -606,7 +599,7 @@ POST /movies/_delete_by_query
 
 # Update API
 
-POST /movies/_doc/1/_update
+POST /movies/_update/1
 {
   &quot;doc&quot;:{
     &quot;likes&quot;: 123
@@ -766,30 +759,32 @@ POST /_analyze
 
 PUT /courses
 {
-    &quot;settings&quot;: {
-        &quot;index&quot;: {
-            &quot;analysis&quot;: {
-                &quot;analyzer&quot;: {
-                    &quot;custom_analyzer&quot;: {
-                        &quot;tokenizer&quot;: &quot;lowercase&quot;,
-                        &quot;filter&quot;: [&quot;lowercase&quot;, &quot;stop&quot;, &quot;snowball&quot;]
-                    }
-                }
-            }
+  &quot;settings&quot;: {
+    &quot;index&quot;: {
+      &quot;analysis&quot;: {
+        &quot;analyzer&quot;: {
+          &quot;custom_analyzer&quot;: {
+            &quot;tokenizer&quot;: &quot;lowercase&quot;,
+            &quot;filter&quot;: [
+              &quot;lowercase&quot;,
+              &quot;stop&quot;,
+              &quot;snowball&quot;
+            ]
+          }
         }
-    },
-    &quot;mappings&quot;: {
-        &quot;_doc&quot;: {
-            &quot;properties&quot;: {
-                &quot;title&quot;: {
-                    &quot;type&quot;: &quot;text&quot;,
-                    &quot;store&quot;: true,
-                    &quot;index&quot;: true,
-                    &quot;analyzer&quot;: &quot;custom_analyzer&quot;
-                }
-            }
-        }
+      }
     }
+  },
+  &quot;mappings&quot;: {
+    &quot;properties&quot;: {
+      &quot;title&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;store&quot;: true,
+        &quot;index&quot;: true,
+        &quot;analyzer&quot;: &quot;custom_analyzer&quot;
+      }
+    }
+  }
 }
 
 #Deprecated since 6.0
@@ -819,7 +814,8 @@ PUT /courses/_settings
           },
           &quot;suggester&quot;: {
             &quot;tokenizer&quot;: &quot;lowercase&quot;,
-            &quot;filter&quot;: [ &quot;4edgeNGram&quot;
+            &quot;filter&quot;: [
+              &quot;4edgeNGram&quot;
             ]
           }
         },
@@ -834,14 +830,12 @@ PUT /courses/_settings
     }
   },
   &quot;mappings&quot;: {
-    &quot;_doc&quot;: {
-      &quot;properties&quot;: {
-        &quot;title&quot;: {
-          &quot;type&quot;: &quot;text&quot;,
-          &quot;store&quot;: true,
-          &quot;index&quot;: true,
-          &quot;analyzer&quot;: &quot;custom_analyzer&quot;
-        }
+    &quot;properties&quot;: {
+      &quot;title&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;store&quot;: true,
+        &quot;index&quot;: true,
+        &quot;analyzer&quot;: &quot;custom_analyzer&quot;
       }
     }
   }
@@ -882,24 +876,22 @@ POST /_analyze
 
 PUT /chinese
 {
-    &quot;mappings&quot;: {
-        &quot;_doc&quot;: {
-            &quot;properties&quot;: {
-                &quot;title&quot;: {
-                    &quot;type&quot;: &quot;text&quot;,
-                    &quot;store&quot;: true,
-                    &quot;index&quot;: true,
-                    &quot;analyzer&quot;: &quot;smartcn&quot;
-                },
-                &quot;body&quot;: {
-                    &quot;type&quot;: &quot;text&quot;,
-                    &quot;store&quot;: true,
-                    &quot;index&quot;: true,
-                    &quot;analyzer&quot;: &quot;smartcn&quot;
-                }
-            }
-        }
+  &quot;mappings&quot;: {
+    &quot;properties&quot;: {
+      &quot;title&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;store&quot;: true,
+        &quot;index&quot;: true,
+        &quot;analyzer&quot;: &quot;smartcn&quot;
+      },
+      &quot;body&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;store&quot;: true,
+        &quot;index&quot;: true,
+        &quot;analyzer&quot;: &quot;smartcn&quot;
+      }
     }
+  }
 }
 
 PUT /chinese/_doc/1
@@ -991,18 +983,18 @@ POST /medcl/_analyze
 # IK Analyzer Install
 
 Visit https://github.com/medcl/elasticsearch-analysis-ik/releases
-copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
+copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.0.1.zip
 
-bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
+bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.0.1.zip
 
-# 設定字典檔 https://github.com/medcl/elasticsearch-analysis-ik#dictionary-configuration
+## 設定字典檔 https://github.com/medcl/elasticsearch-analysis-ik#dictionary-configuration
 
 add custom.dic(裡面可以放自訂的自詞，一行一個字) file under {conf}/analysis-ik/config/
 
 修改 {conf}/analysis-ik/config/IKAnalyzer.cfg.xml 加上 custom.dic 在 ext_dict 裡面
 &lt;entry key=&quot;ext_dict&quot;&gt;custom.dic&lt;/entry&gt;
 
-重新啟動elasticsearch
+## 重新啟動elasticsearch
 
 POST _analyze
 {
@@ -1023,22 +1015,20 @@ PUT /my_index
     &quot;refresh_interval&quot;: &quot;1s&quot;
   },
   &quot;mappings&quot;: {
-    &quot;_doc&quot;: {
-      &quot;_source&quot;: {
-        &quot;enabled&quot;: false
+    &quot;_source&quot;: {
+      &quot;enabled&quot;: false
+    },
+    &quot;properties&quot;: {
+      &quot;title&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;store&quot;: true
       },
-      &quot;properties&quot;: {
-        &quot;title&quot;: {
-          &quot;type&quot;: &quot;text&quot;,
-          &quot;store&quot;: true
-        },
-        &quot;date&quot;: {
-          &quot;type&quot;: &quot;date&quot;,
-          &quot;store&quot;: true
-        },
-        &quot;content&quot;: {
-          &quot;type&quot;: &quot;text&quot;
-        }
+      &quot;date&quot;: {
+        &quot;type&quot;: &quot;date&quot;,
+        &quot;store&quot;: true
+      },
+      &quot;content&quot;: {
+        &quot;type&quot;: &quot;text&quot;
       }
     }
   }
@@ -1050,21 +1040,19 @@ PUT /my_index
     &quot;refresh_interval&quot;: &quot;1s&quot;
   },
   &quot;mappings&quot;: {
-    &quot;_doc&quot;: {
-      &quot;_source&quot;: {
-        &quot;enabled&quot;: true,
-        &quot;excludes&quot;: [&quot;content&quot;]
+    &quot;_source&quot;: {
+      &quot;enabled&quot;: true,
+      &quot;excludes&quot;: [&quot;content&quot;]
+    },
+    &quot;properties&quot;: {
+      &quot;title&quot;: {
+        &quot;type&quot;: &quot;text&quot;
       },
-      &quot;properties&quot;: {
-        &quot;title&quot;: {
-          &quot;type&quot;: &quot;text&quot;
-        },
-        &quot;date&quot;: {
-          &quot;type&quot;: &quot;date&quot;
-        },
-        &quot;content&quot;: {
-          &quot;type&quot;: &quot;text&quot;
-        }
+      &quot;date&quot;: {
+        &quot;type&quot;: &quot;date&quot;
+      },
+      &quot;content&quot;: {
+        &quot;type&quot;: &quot;text&quot;
       }
     }
   }
@@ -1089,49 +1077,45 @@ GET my_index/_search
 <div><pre><code class="language-none">PUT /copy_to
 {
   &quot;mappings&quot;: {
-    &quot;test&quot;: {
-      &quot;properties&quot;: {
-        &quot;first_name&quot;: {
-          &quot;type&quot;: &quot;text&quot;,
-          &quot;copy_to&quot;: &quot;full_name&quot; 
-        },
-        &quot;last_name&quot;: {
-          &quot;type&quot;: &quot;text&quot;,
-          &quot;copy_to&quot;: &quot;full_name&quot; 
-        },
-        &quot;full_name&quot;: {
-          &quot;type&quot;: &quot;text&quot;
-        }
+    &quot;properties&quot;: {
+      &quot;first_name&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;copy_to&quot;: &quot;full_name&quot; 
+      },
+      &quot;last_name&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;copy_to&quot;: &quot;full_name&quot; 
+      },
+      &quot;full_name&quot;: {
+        &quot;type&quot;: &quot;text&quot;
       }
     }
   }
 }
 
-PUT /copy_to/test/1
+PUT /copy_to/_doc/1
 {
   &quot;first_name&quot;: &quot;John&quot;,
   &quot;last_name&quot;: &quot;Smith&quot;
 }
 
-GET /copy_to/test/_search</code></pre></div>
+GET /copy_to/_doc/_search</code></pre></div>
 
 <h3 id="toc_11">Term Vector</h3>
 
 <div><pre><code class="language-none">PUT term_vector
 {
   &quot;mappings&quot;: {
-    &quot;test&quot;: {
-      &quot;properties&quot;: {
-        &quot;text&quot;: {
-          &quot;type&quot;:        &quot;text&quot;,
-          &quot;term_vector&quot;: &quot;with_positions_offsets&quot;
-        }
+    &quot;properties&quot;: {
+      &quot;text&quot;: {
+        &quot;type&quot;:        &quot;text&quot;,
+        &quot;term_vector&quot;: &quot;with_positions_offsets&quot;
       }
     }
   }
 }
 
-PUT term_vector/test/1
+PUT term_vector/_doc/1
 {
   &quot;text&quot;: &quot;Quick brown fox&quot;
 }
@@ -1375,7 +1359,7 @@ GET test_date/_search
 
 <h3 id="toc_16">fuzzy query</h3>
 
-<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+<div><pre><code class="language-none">GET top_rated_movies/_search
 {
     &quot;query&quot;: {
        &quot;fuzzy&quot; : { 
@@ -1554,7 +1538,7 @@ GET shakespeare/_search
 
 <h3 id="toc_22">Date Range</h3>
 
-<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+<div><pre><code class="language-none">GET top_rated_movies/_search
 {
     &quot;size&quot;: 0,
     &quot;aggs&quot;: {
@@ -1573,7 +1557,7 @@ GET shakespeare/_search
 
 <h3 id="toc_23">Date Histogram</h3>
 
-<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+<div><pre><code class="language-none">GET top_rated_movies/_search
 {
     &quot;size&quot;: 0,
     &quot;aggs&quot; : {
@@ -1589,7 +1573,7 @@ GET shakespeare/_search
 
 <h3 id="toc_24">Annual movies votes</h3>
 
-<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+<div><pre><code class="language-none">GET top_rated_movies/_search
 {
     &quot;size&quot; : 0,
     &quot;aggs&quot; : {
@@ -1612,7 +1596,7 @@ GET shakespeare/_search
 
 <h3 id="toc_25">Pipeline Aggregation - Annual movies votes + Average</h3>
 
-<div><pre><code class="language-none">GET top_rated_movies/_doc/_search
+<div><pre><code class="language-none">GET top_rated_movies/_search
 {
     &quot;size&quot; : 0,
     &quot;aggs&quot; : {
