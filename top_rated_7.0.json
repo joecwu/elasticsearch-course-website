@@ -1,0 +1,201 @@
+{"index": {"_type": "_doc", "_id": "157336", "_index": "top_rated_movies"}}
+{"title": "Interstellar", "release_date": "2014-11-05", "popularity": 22.4725583216324, "original_title": "Interstellar", "vote_count": 1284, "video": false, "vote_average": 8.7, "id": 157336}
+{"index": {"_type": "_doc", "_id": "244786", "_index": "top_rated_movies"}}
+{"title": "Whiplash", "release_date": "2014-10-10", "popularity": 7.50769344383407, "original_title": "Whiplash", "vote_count": 216, "video": false, "vote_average": 8.6, "id": 244786}
+{"index": {"_type": "_doc", "_id": "140420", "_index": "top_rated_movies"}}
+{"title": "Paperman", "release_date": "2012-11-02", "popularity": 0.932132839390521, "original_title": "Paperman", "vote_count": 126, "video": false, "vote_average": 8.5, "id": 140420}
+{"index": {"_type": "_doc", "_id": "205596", "_index": "top_rated_movies"}}
+{"title": "The Imitation Game", "release_date": "2014-11-14", "popularity": 16.4112811752318, "original_title": "The Imitation Game", "vote_count": 350, "video": false, "vote_average": 8.4, "id": 205596}
+{"index": {"_type": "_doc", "_id": "13042", "_index": "top_rated_movies"}}
+{"title": "Presto", "release_date": "2008-06-26", "popularity": 0.819976736362526, "original_title": "Presto", "vote_count": 146, "video": false, "vote_average": 8.3, "id": 13042}
+{"index": {"_type": "_doc", "_id": "118340", "_index": "top_rated_movies"}}
+{"title": "Guardians of the Galaxy", "release_date": "2014-08-01", "popularity": 18.1479004766473, "original_title": "Guardians of the Galaxy", "vote_count": 1935, "video": false, "vote_average": 8.3, "id": 118340}
+{"index": {"_type": "_doc", "_id": "177572", "_index": "top_rated_movies"}}
+{"title": "Big Hero 6", "release_date": "2014-11-07", "popularity": 14.5233845579401, "original_title": "Big Hero 6", "vote_count": 419, "video": false, "vote_average": 8.3, "id": 177572}
+{"index": {"_type": "_doc", "_id": "194662", "_index": "top_rated_movies"}}
+{"title": "Birdman", "release_date": "2014-10-17", "popularity": 11.8831477322631, "original_title": "Birdman", "vote_count": 219, "video": false, "vote_average": 8.2, "id": 194662}
+{"index": {"_type": "_doc", "_id": "222935", "_index": "top_rated_movies"}}
+{"title": "The Fault in Our Stars", "release_date": "2014-05-16", "popularity": 2.85644829537522, "original_title": "The Fault in Our Stars", "vote_count": 754, "video": false, "vote_average": 8.2, "id": 222935}
+{"index": {"_type": "_doc", "_id": "278", "_index": "top_rated_movies"}}
+{"title": "The Shawshank Redemption", "release_date": "1994-09-14", "popularity": 2.65497501017138, "original_title": "The Shawshank Redemption", "vote_count": 3596, "video": false, "vote_average": 8.1, "id": 278}
+{"index": {"_type": "_doc", "_id": "346", "_index": "top_rated_movies"}}
+{"title": "Seven Samurai", "release_date": "1954-04-26", "popularity": 1.3647794745244, "original_title": "七人の侍", "vote_count": 229, "video": false, "vote_average": 8.1, "id": 346}
+{"index": {"_type": "_doc", "_id": "210577", "_index": "top_rated_movies"}}
+{"title": "Gone Girl", "release_date": "2014-10-03", "popularity": 15.9085817975047, "original_title": "Gone Girl", "vote_count": 1028, "video": false, "vote_average": 8.1, "id": 210577}
+{"index": {"_type": "_doc", "_id": "83564", "_index": "top_rated_movies"}}
+{"title": "La luna", "release_date": "2011-06-22", "popularity": 0.477355214228518, "original_title": "La luna", "vote_count": 50, "video": false, "vote_average": 8.1, "id": 83564}
+{"index": {"_type": "_doc", "_id": "169813", "_index": "top_rated_movies"}}
+{"title": "Short Term 12", "release_date": "2013-08-23", "popularity": 1.0838056431103, "original_title": "Short Term 12", "vote_count": 90, "video": false, "vote_average": 8.1, "id": 169813}
+{"index": {"_type": "_doc", "_id": "389", "_index": "top_rated_movies"}}
+{"title": "12 Angry Men", "release_date": "1957-04-10", "popularity": 1.43958305580061, "original_title": "12 Angry Men", "vote_count": 582, "video": false, "vote_average": 8.1, "id": 389}
+{"index": {"_type": "_doc", "_id": "238", "_index": "top_rated_movies"}}
+{"title": "The Godfather", "release_date": "1972-03-15", "popularity": 2.35432323479584, "original_title": "The Godfather", "vote_count": 2262, "video": false, "vote_average": 8.1, "id": 238}
+{"index": {"_type": "_doc", "_id": "24480", "_index": "top_rated_movies"}}
+{"title": "Partly Cloudy", "release_date": "2009-05-28", "popularity": 0.535037637951626, "original_title": "Partly Cloudy", "vote_count": 77, "video": false, "vote_average": 8.1, "id": 24480}
+{"index": {"_type": "_doc", "_id": "46738", "_index": "top_rated_movies"}}
+{"title": "Incendies", "release_date": "2010-09-17", "popularity": 0.842012406943899, "original_title": "Incendies", "vote_count": 63, "video": false, "vote_average": 8.1, "id": 46738}
+{"index": {"_type": "_doc", "_id": "3114", "_index": "top_rated_movies"}}
+{"title": "The Searchers", "release_date": "1956-03-13", "popularity": 0.887402632906212, "original_title": "The Searchers", "vote_count": 59, "video": false, "vote_average": 8.1, "id": 3114}
+{"index": {"_type": "_doc", "_id": "82702", "_index": "top_rated_movies"}}
+{"title": "How to Train Your Dragon 2", "release_date": "2014-06-13", "popularity": 5.48959158730617, "original_title": "How to Train Your Dragon 2", "vote_count": 750, "video": false, "vote_average": 8.1, "id": 82702}
+{"index": {"_type": "_doc", "_id": "85350", "_index": "top_rated_movies"}}
+{"title": "Boyhood", "release_date": "2014-07-11", "popularity": 5.73641334581085, "original_title": "Boyhood", "vote_count": 410, "video": false, "vote_average": 8.1, "id": 85350}
+{"index": {"_type": "_doc", "_id": "13060", "_index": "top_rated_movies"}}
+{"title": "Lifted", "release_date": "2006-12-28", "popularity": 0.601947967947612, "original_title": "Lifted", "vote_count": 85, "video": false, "vote_average": 8.0, "id": 13060}
+{"index": {"_type": "_doc", "_id": "832", "_index": "top_rated_movies"}}
+{"title": "M", "release_date": "1931-05-11", "popularity": 0.785812813936985, "original_title": "M", "vote_count": 83, "video": false, "vote_average": 8.0, "id": 832}
+{"index": {"_type": "_doc", "_id": "77338", "_index": "top_rated_movies"}}
+{"title": "The Intouchables", "release_date": "2011-11-02", "popularity": 2.06785018198925, "original_title": "Intouchables", "vote_count": 1290, "video": false, "vote_average": 8.0, "id": 77338}
+{"index": {"_type": "_doc", "_id": "548", "_index": "top_rated_movies"}}
+{"title": "Rashomon", "release_date": "1950-12-26", "popularity": 0.577070163562297, "original_title": "Rashômon", "vote_count": 128, "video": false, "vote_average": 8.0, "id": 548}
+{"index": {"_type": "_doc", "_id": "406", "_index": "top_rated_movies"}}
+{"title": "La Haine", "release_date": "1995-05-31", "popularity": 1.13399342072203, "original_title": "La Haine", "vote_count": 93, "video": false, "vote_average": 8.0, "id": 406}
+{"index": {"_type": "_doc", "_id": "422", "_index": "top_rated_movies"}}
+{"title": "8½", "release_date": "1963-02-15", "popularity": 0.621357490855443, "original_title": "8½", "vote_count": 62, "video": false, "vote_average": 8.0, "id": 422}
+{"index": {"_type": "_doc", "_id": "76203", "_index": "top_rated_movies"}}
+{"title": "12 Years a Slave", "release_date": "2013-10-30", "popularity": 2.48496977625173, "original_title": "12 Years a Slave", "vote_count": 737, "video": false, "vote_average": 8.0, "id": 76203}
+{"index": {"_type": "_doc", "_id": "599", "_index": "top_rated_movies"}}
+{"title": "Sunset Boulevard", "release_date": "1950-08-04", "popularity": 0.487257205801543, "original_title": "Sunset Boulevard", "vote_count": 60, "video": false, "vote_average": 8.0, "id": 599}
+{"index": {"_type": "_doc", "_id": "234200", "_index": "top_rated_movies"}}
+{"title": "Pride", "release_date": "2014-09-12", "popularity": 1.07728043020007, "original_title": "Pride", "vote_count": 54, "video": false, "vote_average": 8.0, "id": 234200}
+{"index": {"_type": "_doc", "_id": "120467", "_index": "top_rated_movies"}}
+{"title": "The Grand Budapest Hotel", "release_date": "2014-03-07", "popularity": 3.98288843990585, "original_title": "The Grand Budapest Hotel", "vote_count": 791, "video": false, "vote_average": 8.0, "id": 120467}
+{"index": {"_type": "_doc", "_id": "25376", "_index": "top_rated_movies"}}
+{"title": "The Secret in Their Eyes", "release_date": "2009-08-13", "popularity": 1.08097271526426, "original_title": "El Secreto de sus Ojos", "vote_count": 139, "video": false, "vote_average": 8.0, "id": 25376}
+{"index": {"_type": "_doc", "_id": "106646", "_index": "top_rated_movies"}}
+{"title": "The Wolf of Wall Street", "release_date": "2013-12-25", "popularity": 2.94087896380115, "original_title": "The Wolf of Wall Street", "vote_count": 1475, "video": false, "vote_average": 8.0, "id": 106646}
+{"index": {"_type": "_doc", "_id": "1398", "_index": "top_rated_movies"}}
+{"title": "Stalker", "release_date": "1979-08-01", "popularity": 0.589400086978788, "original_title": "Сталкер", "vote_count": 57, "video": false, "vote_average": 8.0, "id": 1398}
+{"index": {"_type": "_doc", "_id": "240", "_index": "top_rated_movies"}}
+{"title": "The Godfather: Part II", "release_date": "1974-12-20", "popularity": 2.23486558537222, "original_title": "The Godfather: Part II", "vote_count": 1158, "video": false, "vote_average": 8.0, "id": 240}
+{"index": {"_type": "_doc", "_id": "13929", "_index": "top_rated_movies"}}
+{"title": "Geri's Game", "release_date": "1997-11-24", "popularity": 0.39044438005276, "original_title": "Geri's Game", "vote_count": 66, "video": false, "vote_average": 8.0, "id": 13929}
+{"index": {"_type": "_doc", "_id": "284", "_index": "top_rated_movies"}}
+{"title": "The Apartment", "release_date": "1960-06-15", "popularity": 0.449964156718003, "original_title": "The Apartment", "vote_count": 77, "video": false, "vote_average": 8.0, "id": 284}
+{"index": {"_type": "_doc", "_id": "152601", "_index": "top_rated_movies"}}
+{"title": "Her", "release_date": "2013-12-18", "popularity": 2.30302076563023, "original_title": "Her", "vote_count": 888, "video": false, "vote_average": 8.0, "id": 152601}
+{"index": {"_type": "_doc", "_id": "113833", "_index": "top_rated_movies"}}
+{"title": "The Normal Heart", "release_date": "2014-05-25", "popularity": 1.03470682964636, "original_title": "The Normal Heart", "vote_count": 68, "video": false, "vote_average": 7.9, "id": 113833}
+{"index": {"_type": "_doc", "_id": "116149", "_index": "top_rated_movies"}}
+{"title": "Paddington", "release_date": "2014-11-28", "popularity": 2.73672033522338, "original_title": "Paddington", "vote_count": 61, "video": false, "vote_average": 7.9, "id": 116149}
+{"index": {"_type": "_doc", "_id": "637", "_index": "top_rated_movies"}}
+{"title": "Life Is Beautiful", "release_date": "1997-12-20", "popularity": 1.71739884466985, "original_title": "La vita è bella", "vote_count": 789, "video": false, "vote_average": 7.9, "id": 637}
+{"index": {"_type": "_doc", "_id": "96721", "_index": "top_rated_movies"}}
+{"title": "Rush", "release_date": "2013-09-27", "popularity": 2.14465457791061, "original_title": "Rush", "vote_count": 622, "video": false, "vote_average": 7.9, "id": 96721}
+{"index": {"_type": "_doc", "_id": "975", "_index": "top_rated_movies"}}
+{"title": "Paths of Glory", "release_date": "1957-09-18", "popularity": 0.815558086443536, "original_title": "Paths of Glory", "vote_count": 93, "video": false, "vote_average": 7.9, "id": 975}
+{"index": {"_type": "_doc", "_id": "902", "_index": "top_rated_movies"}}
+{"title": "The City of Lost Children", "release_date": "1995-05-16", "popularity": 0.851805700270863, "original_title": "La cité des enfants perdus", "vote_count": 91, "video": false, "vote_average": 7.9, "id": 902}
+{"index": {"_type": "_doc", "_id": "128", "_index": "top_rated_movies"}}
+{"title": "Princess Mononoke", "release_date": "1997-07-12", "popularity": 1.27962043194276, "original_title": "もののけ姫", "vote_count": 531, "video": false, "vote_average": 7.9, "id": 128}
+{"index": {"_type": "_doc", "_id": "901", "_index": "top_rated_movies"}}
+{"title": "City Lights", "release_date": "1931-01-30", "popularity": 0.645770882987004, "original_title": "City Lights", "vote_count": 64, "video": false, "vote_average": 7.9, "id": 901}
+{"index": {"_type": "_doc", "_id": "129", "_index": "top_rated_movies"}}
+{"title": "Spirited Away", "release_date": "2001-07-20", "popularity": 1.53559107223342, "original_title": "千と千尋の神隠し", "vote_count": 1058, "video": false, "vote_average": 7.9, "id": 129}
+{"index": {"_type": "_doc", "_id": "11878", "_index": "top_rated_movies"}}
+{"title": "Yojimbo", "release_date": "1961-04-25", "popularity": 0.694472672145725, "original_title": "Yôjinbô", "vote_count": 87, "video": false, "vote_average": 7.9, "id": 11878}
+{"index": {"_type": "_doc", "_id": "14784", "_index": "top_rated_movies"}}
+{"title": "The Fall", "release_date": "2006-09-09", "popularity": 1.05171849984282, "original_title": "The Fall", "vote_count": 107, "video": false, "vote_average": 7.9, "id": 14784}
+{"index": {"_type": "_doc", "_id": "1955", "_index": "top_rated_movies"}}
+{"title": "The Elephant Man", "release_date": "1980-10-09", "popularity": 0.873127116166373, "original_title": "The Elephant Man", "vote_count": 120, "video": false, "vote_average": 7.9, "id": 1955}
+{"index": {"_type": "_doc", "_id": "13363", "_index": "top_rated_movies"}}
+{"title": "The Man from Earth", "release_date": "2007-06-10", "popularity": 0.73591855289584, "original_title": "The Man from Earth", "vote_count": 159, "video": false, "vote_average": 7.9, "id": 13363}
+{"index": {"_type": "_doc", "_id": "103663", "_index": "top_rated_movies"}}
+{"title": "The Hunt", "release_date": "2012-10-25", "popularity": 1.09445490878384, "original_title": "Jagten", "vote_count": 198, "video": false, "vote_average": 7.9, "id": 103663}
+{"index": {"_type": "_doc", "_id": "12477", "_index": "top_rated_movies"}}
+{"title": "Grave of the Fireflies", "release_date": "1988-04-16", "popularity": 0.00130042013953445, "original_title": "Hotaru no haka", "vote_count": 163, "video": false, "vote_average": 7.9, "id": 12477}
+{"index": {"_type": "_doc", "_id": "60243", "_index": "top_rated_movies"}}
+{"title": "A Separation", "release_date": "2011-03-15", "popularity": 1.10819220071257, "original_title": "Jodái-e Náder az Simin / جدایی نادر از سیمین", "vote_count": 146, "video": false, "vote_average": 7.9, "id": 60243}
+{"index": {"_type": "_doc", "_id": "3082", "_index": "top_rated_movies"}}
+{"title": "Modern Times", "release_date": "1936-02-05", "popularity": 1.13174472831052, "original_title": "Modern Times", "vote_count": 226, "video": false, "vote_average": 7.9, "id": 3082}
+{"index": {"_type": "_doc", "_id": "152532", "_index": "top_rated_movies"}}
+{"title": "Dallas Buyers Club", "release_date": "2013-11-22", "popularity": 1.66538869871296, "original_title": "Dallas Buyers Club", "vote_count": 587, "video": false, "vote_average": 7.9, "id": 152532}
+{"index": {"_type": "_doc", "_id": "8392", "_index": "top_rated_movies"}}
+{"title": "My Neighbor Totoro", "release_date": "1988-04-16", "popularity": 1.07297234738042, "original_title": "Tonari no Totoro", "vote_count": 494, "video": false, "vote_average": 7.9, "id": 8392}
+{"index": {"_type": "_doc", "_id": "892", "_index": "top_rated_movies"}}
+{"title": "Delicatessen", "release_date": "1991-04-17", "popularity": 0.330321367141754, "original_title": "Delicatessen", "vote_count": 61, "video": false, "vote_average": 7.8, "id": 892}
+{"index": {"_type": "_doc", "_id": "109424", "_index": "top_rated_movies"}}
+{"title": "Captain Phillips", "release_date": "2013-10-11", "popularity": 2.38257900630746, "original_title": "Captain Phillips", "vote_count": 823, "video": false, "vote_average": 7.9, "id": 109424}
+{"index": {"_type": "_doc", "_id": "81", "_index": "top_rated_movies"}}
+{"title": "Nausicaä of the Valley of the Wind", "release_date": "1984-03-11", "popularity": 0.776697056120453, "original_title": "風の谷のナウシカ", "vote_count": 272, "video": false, "vote_average": 7.8, "id": 81}
+{"index": {"_type": "_doc", "_id": "582", "_index": "top_rated_movies"}}
+{"title": "The Lives of Others", "release_date": "2006-03-15", "popularity": 0.818058877984165, "original_title": "Das Leben der Anderen", "vote_count": 266, "video": false, "vote_average": 7.8, "id": 582}
+{"index": {"_type": "_doc", "_id": "5924", "_index": "top_rated_movies"}}
+{"title": "Papillon", "release_date": "1973-12-16", "popularity": 0.849098603760398, "original_title": "Papillon", "vote_count": 68, "video": false, "vote_average": 7.8, "id": 5924}
+{"index": {"_type": "_doc", "_id": "19", "_index": "top_rated_movies"}}
+{"title": "Metropolis", "release_date": "1927-01-10", "popularity": 0.785773341011029, "original_title": "Metropolis", "vote_count": 160, "video": false, "vote_average": 7.8, "id": 19}
+{"index": {"_type": "_doc", "_id": "189197", "_index": "top_rated_movies"}}
+{"title": "The Pacific", "release_date": "2010-05-16", "popularity": 0.266604820785209, "original_title": "The Pacific", "vote_count": 56, "video": false, "vote_average": 7.8, "id": 189197}
+{"index": {"_type": "_doc", "_id": "9421", "_index": "top_rated_movies"}}
+{"title": "The Dinner Game", "release_date": "1998-04-15", "popularity": 0.475008715603915, "original_title": "Le Dîner de cons", "vote_count": 51, "video": false, "vote_average": 7.8, "id": 9421}
+{"index": {"_type": "_doc", "_id": "7345", "_index": "top_rated_movies"}}
+{"title": "There Will Be Blood", "release_date": "2007-12-28", "popularity": 0.840166956509586, "original_title": "There Will Be Blood", "vote_count": 268, "video": false, "vote_average": 7.8, "id": 7345}
+{"index": {"_type": "_doc", "_id": "4935", "_index": "top_rated_movies"}}
+{"title": "Howl's Moving Castle", "release_date": "2004-11-19", "popularity": 0.990855807313217, "original_title": "ハウルの動く城", "vote_count": 553, "video": false, "vote_average": 7.8, "id": 4935}
+{"index": {"_type": "_doc", "_id": "155", "_index": "top_rated_movies"}}
+{"title": "The Dark Knight", "release_date": "2008-07-18", "popularity": 4.38502368181996, "original_title": "The Dark Knight", "vote_count": 5274, "video": false, "vote_average": 7.8, "id": 155}
+{"index": {"_type": "_doc", "_id": "266856", "_index": "top_rated_movies"}}
+{"title": "The Theory of Everything", "release_date": "2014-11-26", "popularity": 3.95622638414839, "original_title": "The Theory of Everything", "vote_count": 170, "video": false, "vote_average": 7.8, "id": 266856}
+{"index": {"_type": "_doc", "_id": "13930", "_index": "top_rated_movies"}}
+{"title": "For the Birds", "release_date": "2000-11-02", "popularity": 0.415933195970059, "original_title": "For the Birds", "vote_count": 110, "video": false, "vote_average": 7.8, "id": 13930}
+{"index": {"_type": "_doc", "_id": "146233", "_index": "top_rated_movies"}}
+{"title": "Prisoners", "release_date": "2013-09-21", "popularity": 1.73420558939527, "original_title": "Prisoners", "vote_count": 692, "video": false, "vote_average": 7.8, "id": 146233}
+{"index": {"_type": "_doc", "_id": "149", "_index": "top_rated_movies"}}
+{"title": "Akira", "release_date": "1988-07-16", "popularity": 0.930164339310626, "original_title": "Akira", "vote_count": 224, "video": false, "vote_average": 7.8, "id": 149}
+{"index": {"_type": "_doc", "_id": "843", "_index": "top_rated_movies"}}
+{"title": "In the Mood for Love", "release_date": "2000-05-22", "popularity": 1.13594813636948, "original_title": "花樣年華", "vote_count": 54, "video": false, "vote_average": 7.8, "id": 843}
+{"index": {"_type": "_doc", "_id": "242582", "_index": "top_rated_movies"}}
+{"title": "Nightcrawler", "release_date": "2014-10-31", "popularity": 23.0531888091989, "original_title": "Nightcrawler", "vote_count": 309, "video": false, "vote_average": 7.8, "id": 242582}
+{"index": {"_type": "_doc", "_id": "228194", "_index": "top_rated_movies"}}
+{"title": "The Hundred-Foot Journey", "release_date": "2014-08-08", "popularity": 3.3426224151743, "original_title": "The Hundred-Foot Journey", "vote_count": 97, "video": false, "vote_average": 7.8, "id": 228194}
+{"index": {"_type": "_doc", "_id": "137113", "_index": "top_rated_movies"}}
+{"title": "Edge of Tomorrow", "release_date": "2014-06-06", "popularity": 5.638646991508, "original_title": "Edge of Tomorrow", "vote_count": 1285, "video": false, "vote_average": 7.8, "id": 137113}
+{"index": {"_type": "_doc", "_id": "629", "_index": "top_rated_movies"}}
+{"title": "The Usual Suspects", "release_date": "1995-08-16", "popularity": 1.15705012307305, "original_title": "The Usual Suspects", "vote_count": 851, "video": false, "vote_average": 7.8, "id": 629}
+{"index": {"_type": "_doc", "_id": "142061", "_index": "top_rated_movies"}}
+{"title": "Batman: The Dark Knight Returns, Part 2", "release_date": "2013-01-29", "popularity": 0.288424382355988, "original_title": "Batman: The Dark Knight Returns, Part 2", "vote_count": 141, "video": false, "vote_average": 7.8, "id": 142061}
+{"index": {"_type": "_doc", "_id": "1891", "_index": "top_rated_movies"}}
+{"title": "Star Wars: Episode V - The Empire Strikes Back", "release_date": "1980-05-17", "popularity": 2.58640830151171, "original_title": "Star Wars: Episode V - The Empire Strikes Back", "vote_count": 2125, "video": false, "vote_average": 7.8, "id": 1891}
+{"index": {"_type": "_doc", "_id": "303", "_index": "top_rated_movies"}}
+{"title": "Notorious", "release_date": "1946-08-15", "popularity": 0.82336833618778, "original_title": "Notorious", "vote_count": 51, "video": false, "vote_average": 7.8, "id": 303}
+{"index": {"_type": "_doc", "_id": "57158", "_index": "top_rated_movies"}}
+{"title": "The Hobbit: The Desolation of Smaug", "release_date": "2013-12-13", "popularity": 5.51101343860915, "original_title": "The Hobbit: The Desolation of Smaug", "vote_count": 1367, "video": false, "vote_average": 7.8, "id": 57158}
+{"index": {"_type": "_doc", "_id": "550", "_index": "top_rated_movies"}}
+{"title": "Fight Club", "release_date": "1999-10-14", "popularity": 2.42348624196762, "original_title": "Fight Club", "vote_count": 3246, "video": false, "vote_average": 7.8, "id": 550}
+{"index": {"_type": "_doc", "_id": "137106", "_index": "top_rated_movies"}}
+{"title": "The Lego Movie", "release_date": "2014-02-07", "popularity": 3.53289813523119, "original_title": "The Lego Movie", "vote_count": 1006, "video": false, "vote_average": 7.8, "id": 137106}
+{"index": {"_type": "_doc", "_id": "100402", "_index": "top_rated_movies"}}
+{"title": "Captain America: The Winter Soldier", "release_date": "2014-04-04", "popularity": 7.41456936043338, "original_title": "Captain America: The Winter Soldier", "vote_count": 1505, "video": false, "vote_average": 7.8, "id": 100402}
+{"index": {"_type": "_doc", "_id": "127585", "_index": "top_rated_movies"}}
+{"title": "X-Men: Days of Future Past", "release_date": "2014-05-23", "popularity": 9.3879421730917, "original_title": "X-Men: Days of Future Past", "vote_count": 1579, "video": false, "vote_average": 7.8, "id": 127585}
+{"index": {"_type": "_doc", "_id": "10098", "_index": "top_rated_movies"}}
+{"title": "The Kid", "release_date": "1921-01-21", "popularity": 0.76142684240777, "original_title": "The Kid", "vote_count": 57, "video": false, "vote_average": 7.8, "id": 10098}
+{"index": {"_type": "_doc", "_id": "13", "_index": "top_rated_movies"}}
+{"title": "Forrest Gump", "release_date": "1994-06-22", "popularity": 2.43164356593582, "original_title": "Forrest Gump", "vote_count": 2461, "video": false, "vote_average": 7.8, "id": 13}
+{"index": {"_type": "_doc", "_id": "180299", "_index": "top_rated_movies"}}
+{"title": "The Raid 2", "release_date": "2014-03-28", "popularity": 1.64761435104164, "original_title": "The Raid 2: Berandal", "vote_count": 228, "video": false, "vote_average": 7.8, "id": 180299}
+{"index": {"_type": "_doc", "_id": "49047", "_index": "top_rated_movies"}}
+{"title": "Gravity", "release_date": "2013-10-04", "popularity": 3.7248889768773, "original_title": "Gravity", "vote_count": 1659, "video": false, "vote_average": 7.7, "id": 49047}
+{"index": {"_type": "_doc", "_id": "101", "_index": "top_rated_movies"}}
+{"title": "Leon: The Professional", "release_date": "1994-09-14", "popularity": 2.0148016236691, "original_title": "Léon", "vote_count": 1216, "video": false, "vote_average": 7.7, "id": 101}
+{"index": {"_type": "_doc", "_id": "598", "_index": "top_rated_movies"}}
+{"title": "City of God", "release_date": "2002-08-30", "popularity": 1.19394025696697, "original_title": "Cidade de Deus", "vote_count": 478, "video": false, "vote_average": 7.7, "id": 598}
+{"index": {"_type": "_doc", "_id": "49020", "_index": "top_rated_movies"}}
+{"title": "Submarine", "release_date": "2010-09-12", "popularity": 0.457499677155965, "original_title": "Submarine", "vote_count": 73, "video": false, "vote_average": 7.7, "id": 49020}
+{"index": {"_type": "_doc", "_id": "109445", "_index": "top_rated_movies"}}
+{"title": "Frozen", "release_date": "2013-11-19", "popularity": 5.03320185352309, "original_title": "Frozen", "vote_count": 1455, "video": false, "vote_average": 7.7, "id": 109445}
+{"index": {"_type": "_doc", "_id": "424", "_index": "top_rated_movies"}}
+{"title": "Schindler's List", "release_date": "1993-11-29", "popularity": 2.72300069718477, "original_title": "Schindler's List", "vote_count": 1277, "video": false, "vote_average": 7.7, "id": 424}
+{"index": {"_type": "_doc", "_id": "769", "_index": "top_rated_movies"}}
+{"title": "Goodfellas", "release_date": "1990-09-18", "popularity": 1.48611507160234, "original_title": "Goodfellas", "vote_count": 693, "video": false, "vote_average": 7.7, "id": 769}
+{"index": {"_type": "_doc", "_id": "497", "_index": "top_rated_movies"}}
+{"title": "The Green Mile", "release_date": "1999-12-10", "popularity": 1.02167147019378, "original_title": "The Green Mile", "vote_count": 1111, "video": false, "vote_average": 7.7, "id": 497}
+{"index": {"_type": "_doc", "_id": "20453", "_index": "top_rated_movies"}}
+{"title": "3 Idiots", "release_date": "2009-12-25", "popularity": 0.76437246992469, "original_title": "3 Idiots", "vote_count": 495, "video": false, "vote_average": 7.7, "id": 20453}
+{"index": {"_type": "_doc", "_id": "680", "_index": "top_rated_movies"}}
+{"title": "Pulp Fiction", "release_date": "1994-10-14", "popularity": 2.5048476908973, "original_title": "Pulp Fiction", "vote_count": 2990, "video": false, "vote_average": 7.7, "id": 680}
+{"index": {"_type": "_doc", "_id": "914", "_index": "top_rated_movies"}}
+{"title": "The Great Dictator", "release_date": "1940-10-15", "popularity": 0.698219621599258, "original_title": "The Great Dictator", "vote_count": 178, "video": false, "vote_average": 7.7, "id": 914}
+{"index": {"_type": "_doc", "_id": "22843", "_index": "top_rated_movies"}}
+{"title": "Evangelion: 2.0 You Can (Not) Advance", "release_date": "2009-06-26", "popularity": 0.439498954993139, "original_title": "Evangerion shin gekijôban: Ha", "vote_count": 50, "video": false, "vote_average": 7.7, "id": 22843}
+

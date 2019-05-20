@@ -78,7 +78,8 @@
         <div class="col-lg-offset-1 col-lg-10 ">
           <h2>A.2 top_rated.json</h2>
           <p><strong>3. Elasticsearch Mapping與Search搭配</strong>中所使用到的電影資訊。適用於想練習Bulk API與較多數量document的query時。</p>
-          <a href="top_rated.json"><h3><code>top_rated.json</code></h3></a>
+          <a href="top_rated_6.0.json"><h3><code>top_rated_6.0.json</code></h3></a>
+          <a href="top_rated_7.0.json"><h3><code>top_rated_7.0json</code></h3></a>
         </div>  
       </div>
       <div class="row">
@@ -104,6 +105,7 @@
           <p>Windows Powershell</p>
           <pre>Invoke-RestMethod "http://localhost:9200/shakespeare/doc/_bulk?pretty" -Method Post -ContentType 'application/x-ndjson' -InFile "shakespeare_6.0.json"</pre>
           <a href="shakespeare_6.0.json"><h3><code>shakespeare_6.0.json</code></h3></a>
+          <a href="shakespeare_7.0.json"><h3><code>shakespeare_7.0.json</code></h3></a>
         </div>  
       </div>
       <div class="row">
