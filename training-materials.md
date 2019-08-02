@@ -938,6 +938,40 @@ GET nested_fields/_search
 }
 ```
 
+### Index Template
+
+```
+PUT _template/my_template
+{
+  "index_patterns": [
+    "joe-*",
+    "*-wu"
+  ],
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "_source": {
+      "enabled": false
+    },
+    "properties": {
+      "id": {
+        "type": "keyword"
+      }
+    }
+  }
+}
+
+POST joe-yoyo/_doc/1
+{
+  "id":"hi hi hi",
+  "name":"yo yo yo"
+}
+
+GET joe-yoyo/_mapping
+```
+
+
 ## Search
 
 ### match query with `type`
