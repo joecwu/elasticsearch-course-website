@@ -237,17 +237,19 @@ GET /movies/_mapping
 # Create Index
 PUT /movies
 {
-  "settings" : {
-    "number_of_shards" : 1
+  "settings": {
+    "number_of_shards": 1
   },
-  "mappings" : {
-    "_doc" : {
-      "_source" : { "enabled" : false },
-      "properties" : {
-        "director": {
-          "type": "text",
-          "fields": {
-            "original": {"type": "keyword"}
+  "mappings": {
+    "_source": {
+      "enabled": false
+    },
+    "properties": {
+      "director": {
+        "type": "text",
+        "fields": {
+          "original": {
+            "type": "keyword"
           }
         }
       }
@@ -686,9 +688,9 @@ POST /medcl/_analyze
 # IK Analyzer Install
 
 Visit https://github.com/medcl/elasticsearch-analysis-ik/releases
-copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.0.1.zip
+copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.3.0.zip
 
-bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.0.1.zip
+bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.3.0.zip
 
 ## 設定字典檔 https://github.com/medcl/elasticsearch-analysis-ik#dictionary-configuration
 
