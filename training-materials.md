@@ -337,12 +337,12 @@ GET /movies/_mget
 
 curl -i -XPUT http://localhost:9200/_bulk -H 'Content-Type: application/json' --data-binary @top_rated.json
 
-curl -i -XPUT http://localhost:9200/shakespeare/doc/_bulk -H 'Content-Type: application/x-ndjson' --data-binary @shakespeare_6.0.json
+curl -i -XPUT http://localhost:9200/shakespeare/_bulk -H 'Content-Type: application/x-ndjson' --data-binary @shakespeare.json
 
 or
 
 PUT /_bulk
-{{past the top_rated.json}}
+{{content of top_rated.json}}
 
 # Search API
 
@@ -649,8 +649,9 @@ POST /chinese/_search
 
 #pinyin 拼音plugin
 
-PUT /medcl/ 
+PUT /medcl/
 {
+  "settings": { 
     "index" : {
         "analysis" : {
             "analyzer" : {
@@ -671,6 +672,7 @@ PUT /medcl/
             }
         }
     }
+  }
 }
 
 POST /medcl/_analyze
@@ -845,10 +847,10 @@ GET term_vector/_search
 
 ### Nested Fileds
 ```
-PUT nested_fields/test/1
+PUT nested_fields/_doc/1
 {
    "group": "fans",
-   "user": [
+   "users": [
       {
          "first": "John",
          "last": "Smith"
@@ -867,12 +869,12 @@ GET nested_fields/_search
          "must": [
             {
                "match": {
-                  "user.first": "Alice"
+                  "users.first": "Alice"
                }
             },
             {
                "match": {
-                  "user.last": "Smith"
+                  "users.last": "Smith"
                }
             }
          ]
@@ -884,22 +886,20 @@ GET nested_fields/_mapping
 
 DELETE nested_fields
 
-PUT nested_fields 
+PUT nested_fields
 {
-   "mappings": {
-      "test": {
-         "properties": {
-            "user": {
-               "type": "nested"
-            }
-         }
+  "mappings": {
+    "properties": {
+      "users": {
+        "type": "nested"
       }
-   }
+    }
+  }
 }
 
 GET nested_fields/_mapping
 
-PUT nested_fields/test/1
+PUT nested_fields/_doc/1
 {
    "group": "fans",
    "user": [
@@ -918,18 +918,18 @@ GET nested_fields/_search
 {
    "query": {
       "nested": {
-         "path": "user",
+         "path": "users",
          "query": {
             "bool": {
                "must": [
                   {
                      "match": {
-                        "user.first": "Alice"
+                        "users.first": "Alice"
                      }
                   },
                   {
                      "match": {
-                        "user.last": "Smith"
+                        "users.last": "Smith"
                      }
                   }
                ]
@@ -1039,22 +1039,22 @@ GET chinese/_search
 ### range query
 
 ```
-PUT test_date/test/1
+PUT test_date/_doc/1
 {
   "time": "2017-03-05T23:12:13"
 }
 
-PUT test_date/test/2
+PUT test_date/_doc/2
 {
   "time": "2017-03-05"
 }
 
-PUT test_date/test/3
+PUT test_date/_doc/3
 {
   "time": "2017-03-05T00:00:00"
 }
 
-GET test_date/_mapping/test
+GET test_date/_mapping
 
 GET test_date/_search
 {
@@ -1293,19 +1293,23 @@ GET shakespeare/_search
 ```
 GET top_rated_movies/_search
 {
-    "size": 0,
-    "aggs": {
-        "range": {
-            "date_range": {
-                "field": "release_date",
-                "format": "MM-yyy",
-                "ranges": [
-                    { "to": "now-2y" }, 
-                    { "from": "now-2y" } 
-                ]
-            }
-        }
+  "size": 0,
+  "aggs": {
+    "range": {
+      "date_range": {
+        "field": "release_date",
+        "format": "MM-yyy",
+        "ranges": [
+          {
+            "to": "now-5y"
+          },
+          {
+            "from": "now-5y"
+          }
+        ]
+      }
     }
+  }
 }
 ```
 
@@ -1360,7 +1364,7 @@ GET top_rated_movies/_search
         "movies_per_year" : {
             "date_histogram" : {
                 "field" : "release_date",
-                "interval" : "year",
+                "calendar_interval" : "year",
                 "format": "yyyy"
             },
             "aggs": {
