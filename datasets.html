@@ -91,6 +91,7 @@
 {
  "mappings": {
    "properties": {
+    "type": {"type": "keyword"},
     "speaker": {"type": "keyword"},
     "play_name": {"type": "keyword"},
     "line_id": {"type": "integer"},
@@ -99,11 +100,10 @@
  }
 }</pre>
           <p>Linux / MacOS</p>
-          <pre>curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/_bulk?pretty' --data-binary @shakespeare_7.0.json</pre>
+          <pre>curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/_bulk?pretty' --data-binary @shakespeare.json</pre>
           <p>Windows Powershell</p>
-          <pre>Invoke-RestMethod "http://localhost:9200/shakespeare/_bulk?pretty" -Method Post -ContentType 'application/x-ndjson' -InFile "shakespeare_7.0.json"</pre>
-          <a href="shakespeare_6.0.json"><h3><code>shakespeare_6.0.json</code></h3></a>
-          <a href="shakespeare_7.0.json"><h3><code>shakespeare_7.0.json</code></h3></a>
+          <pre>Invoke-RestMethod "http://localhost:9200/shakespeare/_bulk?pretty" -Method Post -ContentType 'application/x-ndjson' -InFile "shakespeare.json"</pre>
+          <a href="shakespeare.json"><h3><code>shakespeare.json</code></h3></a>
         </div>  
       </div>
       <div class="row">
@@ -126,6 +126,13 @@
 	  <p>Pokemon data</p>
 	  <a href="pokemon_index.json"><h3><code>pokemon_index.json</code></h3></a>
           <a href="pokemon.json"><h3><code>pokemon.json</code></h3></a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.7 accounts.json</h2>
+          <p>Account data</p>
+          <a href="accounts.json"><h3><code>accounts.json</code></h3></a>
         </div>
       </div>
     </div>
