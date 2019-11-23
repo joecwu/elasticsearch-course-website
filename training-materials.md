@@ -317,12 +317,10 @@ GET /_mget
   "docs": [
     {
       "_index": "movies",
-      "_type": "_doc",
       "_id": "1"
     },
     {
       "_index": "movies",
-      "_type": "_doc",
       "_id": "2"
     }
   ]
