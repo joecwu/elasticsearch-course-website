@@ -707,6 +707,99 @@ POST _analyze
   "text": "蔡英文跟柯文哲去基隆廟口夜市吃宵夜"
 }
 
+
+# 補充 混合analyzer
+
+PUT /chinese
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "pinyin_analyzer": {
+            "tokenizer": "my_pinyin"
+          }
+        },
+        "tokenizer": {
+          "my_pinyin": {
+            "type": "pinyin",
+            "keep_separate_first_letter": false,
+            "keep_full_pinyin": true,
+            "keep_original": true,
+            "limit_first_letter_length": 16,
+            "lowercase": true,
+            "remove_duplicated_term": true
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "store": true,
+        "index": true,
+        "analyzer": "standard",
+        "fields": {
+          "ik": {
+            "type": "text",
+            "analyzer": "ik_smart"
+          },
+          "pinyin": {
+            "type": "text",
+            "analyzer": "pinyin_analyzer"
+          }
+        }
+      },
+      "body": {
+        "type": "text",
+        "store": true,
+        "index": true,
+        "analyzer": "standard",
+        "fields": {
+          "ik": {
+            "type": "text",
+            "analyzer": "ik_smart"
+          },
+          "pinyin": {
+            "type": "text",
+            "analyzer": "pinyin_analyzer"
+          }
+        }
+      }
+    }
+  }
+}
+
+# Boost for difference fields
+POST /chinese/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "bool": {
+            "must": [
+              {
+                "match": {
+                  "body.ik": "蔡英文"
+                }
+              }
+            ],
+            "boost": 3
+          }
+        },
+        {
+          "match": {
+            "body.pinyin": "蔡英文"
+          }
+        }
+      ]
+    }
+  }
+}
+
 ```
 
 ## Mapping
@@ -1135,6 +1228,41 @@ POST fuzzy_test/_search
   }
 }
 ```
+
+### 匯入 Shakespeare
+```
+PUT /shakespeare
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "type": {
+        "type": "keyword"
+      },
+      "speaker": {
+        "type": "keyword"
+      },
+      "play_name": {
+        "type": "keyword"
+      },
+      "line_id": {
+        "type": "integer"
+      },
+      "speech_number": {
+        "type": "integer"
+      }
+    }
+  }
+}
+```
+
+```
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/_bulk?pretty' --data-binary @shakespeare.json
+```
+
 
 ### field collapse
 ```
