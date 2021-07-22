@@ -14,7 +14,7 @@ PUT movies/_doc/5
 {"title":"Apocalypse Now","director":"Francis Ford Coppola","year":1979,"genres":["Drama","War"]}
 
 PUT movies/_doc/6
-{"title":"Kill Bill: Vol. 1","director":"Quentin Tarantino","year":2003,"genres":["Action","Crime","Thriller"]}
+{"title":"Kill Bill: Vol. 2","director":"Quentin Tarantino","year":2004,"genres":["Action","Crime","Thriller"]}
 
 PUT movies/_doc/7
 {"title":"The Assassination of Jesse James by the Coward Robert Ford","director":"Andrew Dominik","year":2007,"genres":["Biography","Crime","Drama"]}
