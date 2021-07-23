@@ -80,12 +80,12 @@
           <p><strong>3. Elasticsearch Mapping與Search搭配</strong>中所使用到的電影資訊。適用於想練習Bulk API與較多數量document的query時。</p>
           <a href="top_rated_6.0.json"><h3><code>top_rated_6.0.json</code></h3></a>
           <a href="top_rated_7.0.json"><h3><code>top_rated_7.0.json</code></h3></a>
-          <p>另外以下是資料量較多，各約1159筆，並且沒有宣告 Index Name 的測試資料 (bulk format)</p>
+          <p>另外以下是資料量較多，各約 1160 與 1159 筆，並且沒有宣告 Index Name 的測試資料 (bulk format)</p>
           <a href="top_rated_movies.en_US.ndjson"><h3><code>Top rated movies in en_US</code></h3></a>
           <a href="top_rated_movies.zh_TW.ndjson"><h3><code>Top rated movies in zh_TW</code></h3></a>
           <p>Linux / MacOS: 使用 curl 指令與 pipeline 將網站來源的 bulk 內容，匯入到本地的 Elasticsearch 之中。</p>
           <pre>
-curl -s "https://es.joecwu.com/top_rated_movies.en_US.bulk" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk' --data-binary @-
+curl -s "https://es.joecwu.com/top_rated_movies.en_US.bulk" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/top_rated_movies/_bulk' --data-binary @-
           </pre>
         </div>  
       </div>
