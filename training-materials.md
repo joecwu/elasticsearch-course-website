@@ -1,57 +1,70 @@
 # Elasticsearch Training Material
 
-## Setup Elasticsearch
+## ELASTICSEARCH 快速上手
+
+### 查詢 Cluster 狀態
 
 ```
 GET _cat/nodes?v
+```
 
+### Indexing documents
+
+```
 PUT /movies/_doc/1
 {
   "title": "Star Wars: Episode VII – The Force Awakens",
   "director": "J.J. Abrams",
   "year": 2015
 }
+```
 
+### 確認 Index Document 個數
+
+```
 GET _cat/indices?v
+```
 
-GET _cat
+### 搜尋所有documents
 
+```
 GET _search
+```
 
+
+### 加入 Genres 的欄位
+
+```
 PUT /movies/_doc/1
 {
   "title": "Star Wars: Episode VII – The Force Awakens",
   "director": "J.J. Abrams",
   "year": 2015,
-  "genres": ["Action", "Adventure", "Fantasy"]
+  "Genres": ["Action", "Adventure", "Fantasy"]
 }
+```
 
-PUT /movies/_doc/2
-{
-    "title": "The Godfather",
-    "director": "Francis Ford Coppola",
-    "year": 1972,
-    "genres": ["Crime", "Drama"]
-}
+### Getting document by ID
 
-PUT /movies/_doc/3
-{
-    "title": "Kill Bill: Vol. 1",
-    "director": "Quentin Tarantino",
-    "year": 2003,
-    "genres": ["Action", "Crime", "Thriller"]
-}
-
+```
 GET /movies/_doc/1
 
 GET /movies/_doc/1?_source=title,director
 
 GET /movies/_doc/1/_source
+```
 
+### Deleting document
+
+```
 DELETE /movies/_doc/1
 ```
 
-## Search
+### 匯入 10 筆 Movies 資料
+
+資料來源: [課程網站 Appendix A. Datasets](https://es.joecwu.com/datasets.html) 當中的 A.1 [load movies](https://es.joecwu.com/load_movies_kibana.json)
+
+### Search
 
 ```
 GET /movies/_search
@@ -90,44 +103,42 @@ POST /movies/_search
 GET /movies/_search?q=kill
 
 GET /movies/_search?q=title:kill
+```
 
-# Filter
+### Filter
 
+```
 POST /movies/_search
 {
-    "query": {
-        "bool": {
-            "must": [
-                {
-                    "range": {
-                       "year": {
-                          "from": 1972
-                       }
-                    }
-                }
-            ], 
-            "filter": [
-                {
-                    "term": {
-                        "genres": "crime"
-                    }
-                }
-            ]
+  "query": {
+    "bool": {
+      "must": {
+        "query_string": {
+           "fields": ["title"],
+           "query": "kill"
         }
+      }, 
+      "filter": {
+        "term": {
+          "year": "2003"
+        }
+      }
     }
+  }
 }
 
+
 POST /movies/_search
 {
-    "query": {
-        "bool": {
-            "filter": {
-                "term": {
-                    "year": "2003"
-                }
-            }
+  "query": {
+    "bool": { 
+      "filter": {
+        "term": {
+          "year": "2014"
         }
+      }
     }
+  }
 }
 
 POST _search
@@ -166,7 +177,7 @@ POST _search
 }
 ```
 
-## Mapping
+### Term Query 與修改 Mapping 以加入 keyword field
 
 ```
 POST _search
@@ -232,9 +243,9 @@ GET /movies/_mapping
 
 ## Data in/out
 
-```
+### Create Index
 
-# Create Index
+```
 PUT /movies
 {
   "settings": {
@@ -256,8 +267,11 @@ PUT /movies
     }
   }
 }
+```
 
-# Indexing Document
+### Indexing Document with operation type
+
+```
 PUT movies/_doc/8/_create
 {
   "title": "Star Wars: Episode VII – The Force Awakens",
@@ -281,37 +295,50 @@ PUT movies/_doc/8?op_type=create
     "Fantasy"
   ]
 }
+```
 
-# Get API
+### Get API
 
+```
 GET /movies/_doc/1
+```
 
-# Exists API
+### Exists API
 
+```
 HEAD /movies/_doc/1
+```
 
-# Delete API
 
+### Delete API
+
+```
 DELETE /movies/_doc/1
+```
 
-# Delete by Query API
+### Delete by Query API
 
+```
 POST /movies/_delete_by_query
 {
   "query": { "match_all": {} } 
 }
+```
 
-# Update API
+### Update API
 
+```
 POST /movies/_update/1
 {
   "doc":{
     "likes": 123
   }
 }
+```
 
-# Multi Get API
+### Multi Get API
 
+```
 GET /_mget
 {
   "docs": [
@@ -330,9 +357,11 @@ GET /movies/_mget
 { 
   "ids": ["1","2"]
 }
+```
 
-# Bulk API
+### Bulk API
 
+```
 curl -i -XPUT http://localhost:9200/_bulk -H 'Content-Type: application/json' --data-binary @top_rated.json
 
 curl -i -XPUT http://localhost:9200/shakespeare/_bulk -H 'Content-Type: application/x-ndjson' --data-binary @shakespeare.json
@@ -341,9 +370,11 @@ or
 
 PUT /_bulk
 {{content of top_rated.json}}
+```
 
-# Search API
+### Search API
 
+```
 GET /movies/_search?q=star
 
 GET /movies/_search?q=star+OR+kill
@@ -372,6 +403,7 @@ POST /movies/_search
   }
 }
 
+# Enable sort & profile
 POST /movies/_search
 {
   "from": 0, 
@@ -409,11 +441,31 @@ POST /movies/_search
 
 ```
 
-## Segments
-```
-  GET /_cat/indices?v
+## Elasticsearch Under the Hood
 
+### Elasticsearch Flush
+
+```
+POST /index1/_flush
+```
+
+### Elasticsearch Refresh
+
+```
+POST /index1/_refresh
+
+# modify index refresh interval
+PUT /index1/_settings
+{
+  "index.refresh_interval": "60s"
+}
+```
+
+### Segments
+```
   GET /_cat/segments?v
+
+  GET /index/_segments
 
   POST /_forcemerge?max_num_segments=1
 ```
@@ -423,7 +475,10 @@ POST /movies/_search
 # For Day 2
 ---
 
-## Analyzer
+## Text Analysis
+
+### Analyze API 示範
+
 ```
 POST /_analyze
 {
@@ -434,7 +489,7 @@ POST /_analyze
 POST /_analyze
 {
   "tokenizer": "keyword", 
-  "filter": [ "lowercase", "stop" ],
+  "filter": [ "lowercase" ],
   "text": "New York"
 }
 
@@ -442,7 +497,7 @@ POST /_analyze
 {
   "tokenizer": "whitespace", 
   "filter": [ "lowercase", "stop" ],
-  "text": "The New York city is a big city"
+  "text": "The quick fox jumped"
 }
 
 POST /_analyze
@@ -459,20 +514,46 @@ POST /_analyze
   "char_filter": [ "html_strip" ],
   "text": "this is a <b>HTML</b> document"
 }
+```
 
+### 自訂 Analyzer
+
+```
 PUT /courses
 {
   "settings": {
     "index": {
       "analysis": {
         "analyzer": {
-          "custom_analyzer": {
-            "tokenizer": "lowercase",
-            "filter": [
-              "lowercase",
-              "stop",
-              "snowball"
-            ]
+          "my_analyzer": {
+            "tokenizer": "whitespace",
+            "filter": ["lowercase", "stop", "snowball"]
+          }
+        }
+      }
+    }
+  }
+}
+
+POST /courses/_analyze
+{ 
+  "analyzer": "my_analyzer",
+  "text": "The quick fox jumped"
+}
+```
+
+### 練習自訂 Analyzer 指定給某個欄位
+
+```
+PUT /courses
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "my_analyzer": {
+            "tokenizer": "whitespace",
+            "filter": ["lowercase", "stop", "snowball"]
           }
         }
       }
@@ -482,23 +563,22 @@ PUT /courses
     "properties": {
       "title": {
         "type": "text",
-        "store": true,
-        "index": true,
-        "analyzer": "custom_analyzer"
+        "analyzer": "my_analyzer"
       }
     }
   }
 }
-
-#Deprecated since 6.0
-GET /courses/_analyze?field=_doc.title&text=test for customized analyzer
 
 POST /courses/_analyze
 {
   "field": "title", 
   "text": "test for customized analyzer"
 }
+```
 
+### 修改現有的 Index Setting，加入 suggester Analyzer
+
+```
 # Update Existing Index Setting & edgeNGram test
 POST /courses/_close
 PUT /courses/_settings
@@ -510,7 +590,6 @@ PUT /courses/_settings
           "custom_analyzer": {
             "tokenizer": "lowercase",
             "filter": [
-              "lowercase",
               "stop",
               "snowball"
             ]
@@ -536,8 +615,6 @@ PUT /courses/_settings
     "properties": {
       "title": {
         "type": "text",
-        "store": true,
-        "index": true,
         "analyzer": "custom_analyzer"
       }
     }
@@ -550,8 +627,11 @@ POST courses/_analyze
   "text": "test for customized analyzer",
   "analyzer": "suggester"
 }
+```
 
+### 中文斷詞
 
+```
 # Dev Tools HTTP GET w/ 中文 會有問題
 POST _analyze
 {
@@ -644,9 +724,11 @@ POST /chinese/_search
     }
   }
 }
+```
 
-#pinyin 拼音plugin
+### pinyin 拼音 plugin
 
+```
 PUT /medcl/
 {
   "settings": { 
@@ -684,9 +766,12 @@ POST /medcl/_analyze
   "analyzer": "pinyin_analyzer",
   "text": "菜英文"
 }
+```
 
-# IK Analyzer Install
 
+### 自訂詞庫 IK plugin
+
+```
 Visit https://github.com/medcl/elasticsearch-analysis-ik/releases
 copy link for latest zip file, e.g: https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.1/elasticsearch-analysis-ik-7.3.0.zip
 
@@ -706,10 +791,11 @@ POST _analyze
   "analyzer": "ik_smart",
   "text": "蔡英文跟柯文哲去基隆廟口夜市吃宵夜"
 }
+```
 
 
-# 補充 混合analyzer
-
+# 補充，混合 拼音 與 IK analyzer
+```
 PUT /chinese
 {
   "settings": {
@@ -802,7 +888,44 @@ POST /chinese/_search
 
 ```
 
-## Mapping
+## Mapping 的介紹與管理方式
+
+### Basic Mapping
+
+```
+PUT /courses
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": ”keyword”
+      },
+      "title": {"type": ”text"},
+      "start_date": {"type": "date"}
+    }
+  }
+}
+
+```
+
+### Disable Dynamic Mapping
+
+```
+PUT /courses
+{
+  "mappings": {
+    "dynamic": "false",
+    "properties": {
+      "id": {
+        "type": ”keyword”
+      },
+        "title": {"type": ”text"},
+        "start_date": {"type": "date"}
+    }
+  }
+}
+
+```
 
 ### Store
 ```
@@ -810,9 +933,6 @@ DELETE /my_index
 
 PUT /my_index
 {
-  "settings":{
-    "refresh_interval": "1s"
-  },
   "mappings": {
     "_source": {
       "enabled": false
@@ -835,9 +955,6 @@ PUT /my_index
 
 PUT /my_index
 {
-  "settings":{
-    "refresh_interval": "1s"
-  },
   "mappings": {
     "_source": {
       "enabled": true,
@@ -1034,22 +1151,24 @@ GET nested_fields/_search
 ### Index Template
 
 ```
-PUT _template/my_template
+PUT _index_template/my_template
 {
   "index_patterns": [
     "joe-*",
-    "*-wu"
+    "喬-*"
   ],
-  "settings": {
-    "number_of_shards": 1
-  },
-  "mappings": {
-    "_source": {
-      "enabled": false
+  "template": {
+    "settings": {
+      "number_of_shards": 1
     },
-    "properties": {
-      "id": {
-        "type": "keyword"
+    "mappings": {
+      "_source": {
+        "enabled": false
+      },
+      "properties": {
+        "id": {
+          "type": "keyword"
+        }
       }
     }
   }
@@ -1067,7 +1186,7 @@ GET joe-yoyo/_mapping
 
 ## Search
 
-### match query with `type`
+### match query with `operator` and `minimum_should_match`
 
 ```
 GET top_rated_movies/_search
@@ -1083,25 +1202,6 @@ GET top_rated_movies/_search
   "size": 50
 }
 
-# unable to find by using phrase match
-GET top_rated_movies/_search
-{
-  "query": {
-    "match_phrase": {
-      "title": "howl's castle"
-    }
-  }
-}
-
-GET top_rated_movies/_search
-{
-  "query": {
-    "match_phrase": {
-      "title": "howl's moving castle"
-    }
-  }
-}
-
 GET top_rated_movies/_search
 {
   "query": {
@@ -1115,16 +1215,6 @@ GET top_rated_movies/_search
   },
   "size": 50
 }
-
-GET chinese/_search
-{
-  "query": {
-    "match_phrase": {
-      "body": "蔡英文"
-    }
-  },
-  "size": 50
-}
 ```
 
 ### range query
@@ -1132,17 +1222,17 @@ GET chinese/_search
 ```
 PUT test_date/_doc/1
 {
-  "time": "2017-03-05T23:12:13"
+  "time": "2021-07-25T23:12:13"
 }
 
 PUT test_date/_doc/2
 {
-  "time": "2017-03-05"
+  "time": "2021-07-25"
 }
 
 PUT test_date/_doc/3
 {
-  "time": "2017-03-05T00:00:00"
+  "time": "2021-07-25T00:00:00"
 }
 
 GET test_date/_mapping
@@ -1186,13 +1276,44 @@ GET test_date/_search
       "filter": {
         "range": {
           "time": {
-            "lt": "2018-03-05",
+            "lt": "2021-07-25",
             "time_zone": "+0800"
           }
         }
       }
     }
   }
+}
+```
+
+### match phrase query
+```
+GET top_rated_movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": "howl's castle"
+    }
+  }
+}
+
+GET top_rated_movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": "howl's moving castle"
+    }
+  }
+}
+
+GET chinese/_search
+{
+  "query": {
+    "match_phrase": {
+      "body": "蔡英文"
+    }
+  },
+  "size": 50
 }
 ```
 
@@ -1262,7 +1383,6 @@ PUT /shakespeare
 ```
 curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/_bulk?pretty' --data-binary @shakespeare.json
 ```
-
 
 ### field collapse
 ```
@@ -1354,27 +1474,6 @@ GET shakespeare/_search
   "aggs": {
     "speaker": {
       "terms": {
-        "field": "speaker"
-      }
-    }
-  }
-}
-
-GET shakespeare/_search
-{
-  "size": 0,
-  "query": {
-    "bool": {
-      "filter": {
-        "term": {
-          "type": "line"
-        }
-      }
-    }
-  },
-  "aggs": {
-    "speaker": {
-      "terms": {
         "field": "speaker",
         "size": 1000
       }
@@ -1438,7 +1537,6 @@ GET top_rated_movies/_search
   }
 }
 ```
-
 
 ### Date Histogram
 ```
@@ -1510,38 +1608,95 @@ GET top_rated_movies/_search
 }
 ```
 
-
-
-## DEBUG
-```
-GET movies/movie/1/_explain
-{
-    "query": {
-        "match": {
-           "title": {
-               "type": "boolean",
-               "query": "Star Wars: Episode VII – The Force Awakens",
-               "minimum_should_match": "28%"
-           }
-        }
-    }
-}
+## Go To Production
 
 ```
-
-## Others
-
-```
-GET /movies/_segments?pretty
-
-GET /courses/_settings
-
 GET /_nodes/process?pretty
 
 GET /_nodes/stats?pretty
+
+GET /_stats
 ```
 
 ## ELK Example
+
+### Index Mapping for Apache Access Log
+
+```
+{
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "auth": {
+        "type": "keyword"
+      },
+      "bytes": {
+        "type": "long"
+      },
+      "clientip": {
+        "type": "ip"
+      },
+      "geoip": {
+        "properties": {
+          "city_name": {
+            "type": "keyword"
+          },
+          "continent_name": {
+            "type": "keyword"
+          },
+          "country_iso_code": {
+            "type": "keyword"
+          },
+          "country_name": {
+            "type": "keyword"
+          },
+          "location": {
+            "type": "geo_point"
+          },
+          "region_iso_code": {
+            "type": "keyword"
+          },
+          "region_name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "httpversion": {
+        "type": "keyword"
+      },
+      "ident": {
+        "type": "keyword"
+      },
+      "request": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "response": {
+        "type": "keyword",
+        "fields": {
+          "integer": {
+            "type": "integer"
+          }
+        }
+      },
+      "timestamp": {
+        "type": "date",
+        "format" : "DD/MMM/YYYY:HH:mm:SS Z"
+      },
+      "verb": {
+        "type": "keyword"
+      }
+    }
+  }
+}
+```
 
 ### Test Grok Pattern
 
@@ -1560,55 +1715,4 @@ joe 64.242.88.10 - - [08/Mar/2004:00:27:53 -0800] "GET /twiki/bin/view/TWiki/GoB
 
 ```
 %{USERNAME:username} %{COMMONAPACHELOG}
-```
-
-###
-
-
-## Sample Data
-### Movies (for cURL)
-
-```
-curl -XPUT "localhost:9200/movies/_cat/4" -d "{\"title\": \"To Kill a Mockingbird\", \"director\": \"Robert Mulligan\", \"year\": 1962, \"genres\": [\"Crime\", \"Drama\", \"Mystery\"]}"
-curl -XPUT "localhost:9200/movies/_cat/5" -d "{\"title\": \"Apocalypse Now\", \"director\": \"Francis Ford Coppola\", \"year\": 1979, \"genres\": [\"Drama\", \"War\"]}"
-curl -XPUT "localhost:9200/movies/_cat/6" -d "{\"title\": \"Kill Bill: Vol. 1\", \"director\": \"Quentin Tarantino\", \"year\": 2003, \"genres\": [\"Action\", \"Crime\", \"Thriller\"]}"
-curl -XPUT "localhost:9200/movies/_cat/7" -d "{\"title\": \"The Assassination of Jesse James by the Coward Robert Ford\", \"director\": \"Andrew Dominik\", \"year\": 2007, \"genres\": [\"Biography\", \"Crime\", \"Drama\"]}"
-curl -XPUT "localhost:9200/movies/_cat/8" -d "{\"title\": \"Interstellar\", \"director\": \"Christopher Nolan\", \"year\": 2014, \"genres\": [\"Adventure\", \"Sci-Fi\"]}"
-curl -XPUT "localhost:9200/movies/_cat/9" -d "{\"title\": \"The Dark Knight\", \"director\": \"Christopher Nolan\",\"year\": 2008,\"genres\": [\"Action\", \"Crime\", \"Drama\"]}"
-curl -XPUT "localhost:9200/movies/_cat/10" -d "{\"title\": \"Lawrence of Arabia\", \"director\": \"David Lean\", \"year\": 1962, \"genres\": [\"Adventure\", \"Biography\", \"Drama\"]}"
-
-```
-
-### Movies (for Kibana Dev Tools)
-
-```
-PUT movies/_doc/1
-{"title":"Star Wars: Episode VII – The Force Awakens","director":"J.J. Abrams","year":2015,"genres":["Action","Adventure","Fantasy"]}
-
-PUT movies/_doc/2
-{"title":"The Godfather","director":"Francis Ford Coppola","year":1972,"genres":["Crime","Drama"]}
-
-PUT movies/_doc/3
-{"title":"Kill Bill: Vol. 1","director":"Quentin Tarantino","year":2003,"genres":["Action","Crime","Thriller"]}
-
-PUT movies/_doc/4
-{"title":"To Kill a Mockingbird","director":"Robert Mulligan","year":1962,"genres":["Crime","Drama","Mystery"]}
-
-PUT movies/_doc/5
-{"title":"Apocalypse Now","director":"Francis Ford Coppola","year":1979,"genres":["Drama","War"]}
-
-PUT movies/_doc/6
-{"title":"Kill Bill: Vol. 1","director":"Quentin Tarantino","year":2003,"genres":["Action","Crime","Thriller"]}
-
-PUT movies/_doc/7
-{"title":"The Assassination of Jesse James by the Coward Robert Ford","director":"Andrew Dominik","year":2007,"genres":["Biography","Crime","Drama"]}
-
-PUT movies/_doc/8
-{"title":"Interstellar","director":"Christopher Nolan","year":2014,"genres":["Adventure","Sci-Fi"]}
-
-PUT movies/_doc/9
-{"title":"The Dark Knight","director":"Christopher Nolan","year":2008,"genres":["Action","Crime","Drama"]}
-
-PUT movies/_doc/10
-{"title":"Lawrence of Arabia","director":"David Lean","year":1962,"genres":["Adventure","Biography","Drama"]}
 ```
