@@ -236,6 +236,21 @@ POST /movies/_search
   }
 }
 
+GET /movies/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "genres.keyword": "Crime"
+          }
+        }
+      ]
+    }
+  }
+}
+
 # Since 5.0 _default_ mapping for string has keyword field.
 GET /movies/_mapping
 
@@ -1110,7 +1125,7 @@ GET nested_fields/_mapping
 PUT nested_fields/_doc/1
 {
    "group": "fans",
-   "user": [
+   "users": [
       {
          "first": "John",
          "last": "Smith"
@@ -1217,6 +1232,61 @@ GET top_rated_movies/_search
 }
 ```
 
+### match phrase query
+```
+GET top_rated_movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": "howl's castle"
+    }
+  }
+}
+
+GET top_rated_movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": "howl's moving castle"
+    }
+  }
+}
+
+GET top_rated_movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": {
+        "query": "howl's castle",
+        "slop": 1
+      }
+    }
+  }
+}
+
+GET top_rated_movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": {
+        "query": "castle moving",
+        "slop": 2
+      }
+    }
+  }
+}
+
+GET chinese/_search
+{
+  "query": {
+    "match_phrase": {
+      "body": "蔡英文"
+    }
+  },
+  "size": 50
+}
+```
+
 ### range query
 
 ```
@@ -1286,37 +1356,6 @@ GET test_date/_search
 }
 ```
 
-### match phrase query
-```
-GET top_rated_movies/_search
-{
-  "query": {
-    "match_phrase": {
-      "title": "howl's castle"
-    }
-  }
-}
-
-GET top_rated_movies/_search
-{
-  "query": {
-    "match_phrase": {
-      "title": "howl's moving castle"
-    }
-  }
-}
-
-GET chinese/_search
-{
-  "query": {
-    "match_phrase": {
-      "body": "蔡英文"
-    }
-  },
-  "size": 50
-}
-```
-
 ### fuzzy query
 ```
 GET top_rated_movies/_search
@@ -1349,6 +1388,55 @@ POST fuzzy_test/_search
   }
 }
 ```
+
+### Score Boosting
+
+```
+GET top_rated_movies/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "fields": ["title", "original_title^2"], 
+            "query": "city"
+          }
+        }
+      ],
+      "should": [
+        {
+          "range": {
+            "popularity": {
+              "gte": 0.3
+            }
+          }
+        },
+        {
+          "range": {
+            "vote_average": {
+              "gte": 10,
+              "boost": 10000
+            }
+          }
+        }
+      ],
+      "filter": [
+        {
+          "range": {
+            "vote_count": {
+              "gte": 10
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+```
+
+
 
 ### 匯入 Shakespeare
 ```
