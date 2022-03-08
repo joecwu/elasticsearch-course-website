@@ -69,29 +69,37 @@
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
           <h2>A.1 load_movies.bat</h2>
-          <p><strong>1. Elasticsearch基本操作</strong>中所會用到的電影資訊。由於該份網頁教材中的程式碼僅適用於*nix-like的系統，<code>load_movies.bat</code>可讓Windows系統使用者亦可在學習過程中輕鬆匯入相同電影資訊至Elasticsearch cluster。</p>
+          <p><strong>Elasticsearch基本操作</strong>中所會用到的電影資訊。由於該份網頁教材中的程式碼僅適用於*nix-like的系統，<code>load_movies.bat</code>可讓Windows系統使用者亦可在學習過程中輕鬆匯入相同電影資訊至Elasticsearch cluster。</p>
           <a href="load_movies.bat"><h3><code>load_movies.bat</code></h3></a>
           <a href="load_movies_kibana.json"><h3><code>load movies via kibana dev tools</code></h3></a>
         </div>  
       </div>
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
-          <h2>A.2 top_rated.json</h2>
-          <p><strong>3. Elasticsearch Mapping與Search搭配</strong>中所使用到的電影資訊。適用於想練習Bulk API與較多數量document的query時。</p>
+          <h2>A.2 top_rated.json (Kibana)</h2>
+          <p><strong>Elasticsearch Mapping與Search搭配</strong>中所使用到的電影資訊。適用於想練習Bulk API與較多數量document的query時。</p>
           <a href="top_rated_6.0.json"><h3><code>top_rated_6.0.json</code></h3></a>
           <a href="top_rated_7.0.json"><h3><code>top_rated_7.0.json</code></h3></a>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-lg-offset-1 col-lg-10 ">
+          <h2>A.3 top_rated.ndjson (Bulk)</h2>
           <p>另外以下是資料量較多，各約 1160 與 1159 筆，並且沒有宣告 Index Name 的測試資料 (bulk format)</p>
-          <a href="top_rated_movies.en_US.ndjson"><h3><code>Top rated movies in en_US</code></h3></a>
-          <a href="top_rated_movies.zh_TW.ndjson"><h3><code>Top rated movies in zh_TW</code></h3></a>
           <p>Linux / MacOS: 使用 curl 指令與 pipeline 將網站來源的 bulk 內容，匯入到本地的 Elasticsearch 之中。</p>
+          <a href="top_rated_movies.en_US.ndjson"><h3><code>Top rated movies in en_US</code></h3></a>
           <pre>
-curl -s "https://es.joecwu.com/top_rated_movies.en_US.bulk" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/top_rated_movies/_bulk' --data-binary @-
+curl -s "https://es.joecwu.com/top_rated_movies.en_US.ndjson" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/top_rated_movies/_bulk' --data-binary @-
+          </pre>
+          <a href="top_rated_movies.zh_TW.ndjson"><h3><code>Top rated movies in zh_TW</code></h3></a>
+          <pre>
+curl -s "https://es.joecwu.com/top_rated_movies.zh_TW.ndjson" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/top_rated_movies/_bulk' --data-binary @-
           </pre>
         </div>  
       </div>
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
-          <h2>A.3 shakespeare.json</h2>
+          <h2>A.4 shakespeare.json</h2>
           <p>Elasticsearch官方網站中<a>kibana - 10 minutes walk through</a>教學文件中使用到的dataset。其中包含了莎士比亞各名劇的內容。</p>
           <p>Mapping Definition</p>
           <pre>PUT /shakespeare
@@ -115,21 +123,21 @@ curl -s "https://es.joecwu.com/top_rated_movies.en_US.bulk" | curl -H 'Content-T
       </div>
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
-          <h2>A.4 apache_access_log</h2>
+          <h2>A.5 apache_access_log</h2>
           <p>由<a>MonitorWare</a>所提供的Apache sample access log。</p>
           <a href="apache_access_log"><h3><code>apache_access_log</code></h3></a>
         </div>  
       </div>
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
-          <h2>A.5 apache_error_log</h2>
+          <h2>A.6 apache_error_log</h2>
           <p>由<a>MonitorWare</a>所提供的Apache sample error log。</p>
           <a href="apache_error_log"><h3><code>apache_error_log</code></h3></a>
         </div>  
       </div>
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
-          <h2>A.6 pokemon.json</h2>
+          <h2>A.7 pokemon.json</h2>
 	  <p>Pokemon data</p>
 	  <a href="pokemon_index.json"><h3><code>pokemon_index.json</code></h3></a>
           <a href="pokemon.json"><h3><code>pokemon.json</code></h3></a>
@@ -137,7 +145,7 @@ curl -s "https://es.joecwu.com/top_rated_movies.en_US.bulk" | curl -H 'Content-T
       </div>
       <div class="row">
         <div class="col-lg-offset-1 col-lg-10 ">
-          <h2>A.7 accounts.json</h2>
+          <h2>A.8 accounts.json</h2>
           <p>Account data</p>
           <a href="accounts.json"><h3><code>accounts.json</code></h3></a>
         </div>
