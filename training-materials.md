@@ -618,7 +618,7 @@ PUT /courses/_settings
         },
         "filter": {
           "4edgeNGram": {
-            "type": "edgeNGram",
+            "type": "edge_ngram",
             "min_gram": 2,
             "max_gram": 5
           }
@@ -1635,7 +1635,7 @@ GET top_rated_movies/_search
         "articles_over_time" : {
             "date_histogram" : {
                 "field" : "release_date",
-                "interval" : "year",
+                "calendar_interval" : "year",
                 "format" : "yyyy" 
             }
         }
@@ -1652,7 +1652,7 @@ GET top_rated_movies/_search
         "movies_per_year" : {
             "date_histogram" : {
                 "field" : "release_date",
-                "interval" : "year",
+                "calendar_interval" : "year",
                 "format": "yyyy"
             },
             "aggs": {
