@@ -1266,6 +1266,7 @@ POST shrink_v4/_forcemerge?max_num_segments=1
 ### Custom Allocation
 
 - add `node.attr` in `elasticsearch.yml`
+
 ```
 # node-1
 node.attr.rack: r1
@@ -1388,13 +1389,14 @@ path.repo: ["/var/tmp/elastic"]
 ```
 
 - restart all nodes.
-- 
+
 #### Create Searchable Snapshot on Kibana
 
 - go to kibana > stack management > data > snapshot and restore > repositorys to register new repository.
 
 
 - mount searchable snapshot with fully mounted
+
 ```
 POST /_snapshot/demo/daily-snapshot-2021.10.20-aq4f2xodq7efc8vd4iswya/_mount?wait_for_completion=true
 {
@@ -1413,6 +1415,7 @@ GET ss_movies/_search
 ```
 
 - we can also reindex from searchable snapshot
+
 ```
 POST _reindex
 {
@@ -1426,6 +1429,7 @@ POST _reindex
 ```
 
 - mount searchable snapshot with partial mounted
+
 ```
 DELETE ss_movies
 
@@ -1440,21 +1444,25 @@ POST /_snapshot/demo/daily-snapshot-2021.10.20-aq4f2xodq7efc8vd4iswya/_mount?wai
 ```
 
 - query will failed due to no available shared cache
+
 ```
 GET ss_movies/_search
 ```
 
 - update `elasticsearch.yml` to setup shared cache
+
 ```
 xpack.searchable.snapshot.shared_cache.size: 10MB
 ```
 
 - after restart ES, we can search now.
+
 ```
 GET ss_movies/_search
 ```
 
 - we can also check cache stats of searchable snapshot
+
 ```
 GET /_searchable_snapshots/cache/stats
 ```
@@ -1554,6 +1562,7 @@ DELETE _data_stream/my-data-stream
 - Version: 1
 
 - Setup Index Settings
+
 ```
 {
   "number_of_shards": 8
