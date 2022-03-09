@@ -11,6 +11,7 @@
 #### Demo: 使用同一份 ES 執行檔，準備 3 個 nodes 的 cluster
 
 1. 先準備好一份 `elasticsearch.yml` for node: `es01`
+
 ```
 cluster.name: uncle-joe
 node.name: es01
@@ -36,6 +37,7 @@ transport.port: 9300
 3. 修改每一個目錄中的 `elasticsearch.yml` ，將流水號 `01` 改成對應的編號、port 也要改成不重覆的編號，`seed_hosts` 也要設定當下 node 的其他 master-eligible nodes 的 transport port。
 
 for node: `es02`
+
 ```
 cluster.name: uncle-joe
 node.name: es02
@@ -57,6 +59,7 @@ transport.port: 9301
 ```
 
 for node: `es03`
+
 ```
 cluster.name: uncle-joe
 node.name: es03
@@ -195,7 +198,6 @@ GET test/_search?pre_filter_shard_size=2
     "Date"
   ]
 }
-
 
 ```
 
