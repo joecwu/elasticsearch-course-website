@@ -1054,6 +1054,7 @@ xpack.security.http.ssl.keystore.path: http.p12
 ```
 
 - modify `kibana.yml` to trust CA and access ES via HTTPS
+
 ```
 elasticsearch.ssl.certificateAuthorities: $KBN_PATH_CONF/elasticsearch-ca.pem
 
@@ -1383,6 +1384,7 @@ GET freeze/_search?ignore_throttled=false
 #### Prepare Repository for searchable snapshot
 
 - add `path.repo` in `elasticsearch.yml` on each node.
+
 ```
 path.repo: ["/var/tmp/elastic"]
 
