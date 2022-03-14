@@ -1,9 +1,5 @@
 # Elasticsearch 進階運維班
 
------
-##### Day 1
------
-
 ## 1. 深入 Elasticsearch 分散式架構
 
 ### 1-1 Elasticsearch Cluster 的形成與維護機制
@@ -832,7 +828,7 @@ curl -X POST "http://localhost:9202/_license/start_trial?acknowledge=true"
 
 ## 2. 進階資料塑模 (Data Modeling) 與存取方式
 
-### 關聯式資料的存取
+### 2.1 關聯式資料的存取
 
 #### 各種關聯式資料
 
@@ -940,718 +936,773 @@ GET nested_fields/_search
 }
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Security
-
-### Enable Elasticsearch Security in Elasticsearch
-
-- add settings in `elasticsearch.yml`
+#### Join Type
 
 ```
-xpack.security.enabled: true
-```
-
-- create keystore to generate `keystore.seed` (default password in es)
-
-```
-./bin/elasticsearch-keystore create
-./bin/elasticsearch-setup-passwords [auto|interactive]
-```
-
-- setup default password in `bootstrap.password` in keystore (optional)
-
-```
-./bin/elasticsearch-keystore add bootstrap.password
-```
-
-- restart ES
-
-- check security enabled by chrome
-
-Setup Kibana
-
-- setup password in keystore
-
-```
-./bin/kibana-keystore create
-./bin/kibana-keystore add elasticsearch.password
-```
-
-- setup username in kibana.yml
-```
-elasticsearch.username: "kibana_system"
-```
-
-### Enable TLS for ES transport(TCP) communication
-
-- create ca
-```
-./bin/elasticsearch-certutil ca
-```
-
-- create certificate for TLS
-```
-./bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
-```
-
-- copy elastic-certificates.p12 in ES's config folder on each ES nodes.
-
-- add settings below in `elasticsearch.yml`
-
-```
-xpack.security.transport.ssl.enabled: true
-xpack.security.transport.ssl.verification_mode: certificate 
-xpack.security.transport.ssl.client_authentication: required
-xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
-xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
-```
-
-- setup the password of certificate in keystore on each ES nodes.
-
-```
-./bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password
-./bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password
-```
-
-### Enable TLS for ES HTTP communication
-
-- generate http
-
-```
-./bin/elasticsearch-certutil http
-
-# Use an existing CA? [y/N]y
-```
-
-- unzip `elasticsearch-ssl-http.zip`
-- copy `elasticsearch/http.p12` in ES' config folder on each ES nodes.
-- copy `kibana/elasticsearch-ca.pem` in Kibana's config folder.
-- add settings below in `elasticsearch.yml`
-
-```
-xpack.security.http.ssl.enabled: true
-xpack.security.http.ssl.keystore.path: http.p12
-```
-
-- setup the password of certificate in keystore on each ES nodes.
-
-```
-./bin/elasticsearch-keystore add xpack.security.http.ssl.keystore.secure_password
-```
-
-- modify `kibana.yml` to trust CA and access ES via HTTPS
-
-```
-elasticsearch.ssl.certificateAuthorities: $KBN_PATH_CONF/elasticsearch-ca.pem
-
-elasticsearch.hosts: https://<your_elasticsearch_host>:9200
-```
-
-
-### RBAC - Kibana Demo - basic
-
-1. create role - customer_support
-
-- indices: kibana_sample_data_ecommerce
-- privileges: read
-
-- Kibana privileges: Discover(All), Dashboard(Read)
-
-2. create user - joe
-
-- assigne role: customer_support
-
-
-### RBAC - Kibana Demo - advanced w/ filter
-
-1. create new space - Customer Support 
-with previliges below
- - Kibana Discover
- - Kibana Dashboard
- - Stake Management
-
-2. switch space to Customer Support & create index pattern
- - cs-audit-logs-*
- - kibana_sample_data_ecommerce
-
-3. create role - customer_support
-
-- index: kibana_sample_data_ecommerce, 
-- privileges: read
-
-- index: cs-audit-logs-*
-- privileges: read
-
-- Kibana privileges: Discover(All), Dashboard(Read)
-- space: Customer support
-
-
-
-## ILM
-
-### Rollover API
-
-```
-# ----- Preparation -----
-# PUT <ro-{now/d}-000001>
-PUT %3Cro-%7Bnow%2Fd%7D-000001%3E
+# Mapping
+PUT exam
 {
-  "aliases": {
-    "ro": {
-      "is_write_index": true
-    }
-  }
-}
-
-GET _alias/ro
-GET ro/_search
-
-# ----- Rollover -----
-# first try
-POST ro/_rollover
-{
-  "conditions": {
-    "max_age": "5m",
-    "max_docs": 10,
-    "max_primary_shard_size": "1mb"
-  }
-}
-
-# import data
-POST _reindex
-{
-  "source": {
-    "index": "top_rated_movies"
-  },
-  "dest": {
-    "index": "ro"
-  },
-  "script": {
-    "source": "ctx._id=null",
-    "lang": "painless"
-  }
-}
-
-# second try, meet criteria and perform rollover
-POST ro/_rollover
-{
-  "conditions": {
-    "max_age": "5m",
-    "max_docs": 10,
-    "max_primary_shard_size": "1mb"
-  }
-}
-
-# check index & alias status
-GET _alias/ro
-
-```
-
-### Shrink API
-
-```
-# 建立 shrink_v1 index & alias
-PUT shrink_v1
-{
-  "settings": {
-    "number_of_shards": 8
-  }, 
-  "aliases": {
-    "shrink": {
-      "is_write_index": true
-    }
-  }
-}
-
-# 產生假資料 (多跑幾次)
-POST _reindex
-{
-  "source": {
-    "index": "top_rated_movies"
-  },
-  "dest": {
-    "index": "shrink_v1"
-  },
-  "script": {
-    "source": "ctx._id=null",
-    "lang": "painless"
-  }
-}
-
-# 查看資料
-GET shrink/_search
-
-# 非因數不能使用
-POST shrink_v1/_shrink/shrink_v2
- {
-   "settings": {
-     "index.number_of_shards": 3,
-     "index.codec": "best_compression"
-   },
-   "aliases": {
-     "shrink": {}
-   }
-}
-
-# 將 index 設為唯讀
-PUT shrink_v1/_settings
-{
-  "index.blocks.write": true
-}
-
-# 執行 shrink (8->4)
-POST shrink_v1/_shrink/shrink_v2
- {
-   "settings": {
-     "index.number_of_shards": 4,
-     "index.codec": "best_compression"
-   },
-   "aliases": {
-     "shrink": {}
-   }
-}
-
-# 執行 shrink (8->2)
-POST shrink_v1/_shrink/shrink_v3
- {
-   "settings": {
-     "index.number_of_shards": 2,
-     "index.codec": "best_compression"
-   },
-   "aliases": {
-     "shrink": {}
-   }
-}
-
-# 執行 shrink (8->1)
-POST shrink_v1/_shrink/shrink_v4
- {
-   "settings": {
-     "index.number_of_shards": 1,
-     "index.codec": "best_compression"
-   },
-   "aliases": {
-     "shrink": {}
-   }
-}
-
-# 查看結果
-GET _cat/indices/shrink*?v
-GET _cat/segments/shrink*?v&s=index
-
-# 清理資料
-# DELETE shrink*
-
-```
-
-### Force Merge
-
-```
-POST shrink_v4/_forcemerge?max_num_segments=1
-```
-
-### Custom Allocation
-
-- add `node.attr` in `elasticsearch.yml`
-
-```
-# node-1
-node.attr.rack: r1
-node.attr.pet: cat
-
-# node-2
-node.attr.rack: r2
-node.attr.pet: dog
-```
-
-- restart ES & check node attributes
-
-```
-GET _cat/nodeattrs?v
-```
-
-- create index w/ `index.routing.allocation` settings.
-
-```
-
-# create index
-PUT attr_test
-{
-  "settings": {
-    "number_of_shards": 5, 
-    "number_of_replicas": 1, 
-    "index.routing.allocation.include.rack": "r1,r2",
-    "index.routing.allocation.exclude.pet": "dog"
-  }
-}
-
-GET _cat/shards/attr_test?v
-
-GET _cluster/allocation/explain
-
-# not working
-PUT attr_test/_settings
-{
-  "index.routing.allocation.include.rack": "r1,r2"
-}
-
-# because attributes have not been removed
-GET attr_test/_settings?include_defaults=true&filter_path=**.routing.**
-
-PUT attr_test/_settings
-{
-  "index.routing.allocation.include.rack": "r1,r2",
-  "index.routing.allocation.exclude.pet": null
-}
-
-GET _cat/shards/attr_test?v
-
-# [備用補充] 如果要反向的話，要手動移掉已分派好的 shards
-
-POST /_cluster/reroute
-{
-  "commands": [
-    {
-      "cancel": {
-        "index": "attr_test",
-        "shard": 4,
-        "node": "node-2"
+  "mappings": {
+    "properties": {
+      "uid": {
+        "type": "keyword"
+      },
+      "text": {
+        "type": "text"
+      },
+      "relation": { 
+        "type": "join",
+        "relation": {
+          "question": "answer" 
+        }
       }
     }
+  }
+}
+
+# Parent: Question
+PUT exam/_doc/1?refresh
+{
+  "uid": "1",
+  "text": "question 1",
+  "relation": {
+    "name": "question"
+  }
+}
+PUT exam/_doc/2?refresh
+{
+  "uid": "2",
+  "text": "question 2",
+  "relation": {
+    "name": "question"
+  }
+}
+
+# Child: Answers
+PUT exam/_doc/1-1?refresh&routing=1
+{
+  "uid": "1-1",
+  "text": "Answer 1",
+  "relation": {
+    "name": "answer",
+    "parent": "1"
+  }
+}
+PUT exam/_doc/1-2?refresh&routing=1
+{
+  "uid": "1-2",
+  "text": "Answer 2",
+  "relation": {
+    "name": "answer",
+    "parent": "1"
+  }
+}
+PUT exam/_doc/2-1?refresh&routing=2
+{
+  "uid": "2-1",
+  "text": "Answer 1",
+  "relation": {
+    "name": "answer",
+    "parent": "2"
+  }
+}
+
+# 查詢所有的 Answers
+GET exam/_search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "question",
+      "query": {
+        "match_all": {}
+      }
+    }
+  }
+}
+
+# 查詢包含指定 answer 的 parent
+GET exam/_search
+{
+  "query": {
+    "has_child": {
+      "type": "answer",
+      "query": {
+        "match": {
+          "text": "2"
+        }
+      }
+    }
+  }
+}
+
+# 使用 Inner Hits 同時回傳被找到的 childs
+GET exam/_search
+{
+  "query": {
+    "has_child": {
+      "type": "answer",
+      "query": {
+        "match": {
+          "text": "2"
+        }
+      },
+      "inner_hits": {}
+    }
+  }
+}
+
+# 使用 Aggs 來查看系統替 Join 建立的隱藏欄位
+GET exam/_search
+{
+  "size": 0,
+  "aggs": {
+    "questions": {
+      "terms": {
+        "field": "relation#question"
+      }
+    }
+  }
+}
+```
+
+#### 練習：多層關係的資料建模
+
+```
+
+# Mapping
+PUT exam
+{
+  "mappings": {
+    "properties": {
+      "uid": {
+        "type": "keyword"
+      },
+      "text": {
+        "type": "text"
+      },
+      "relation": { 
+        "type": "join",
+        "relation": {
+          "question": "answer" 
+        }
+      }
+    }
+  }
+}
+
+# Parent: Question
+PUT exam/_doc/1?refresh
+{
+  "text": "question 1",
+  "relation": {
+    "name": "question"
+  }
+}
+PUT exam/_doc/2?refresh
+{
+  "text": "question 2",
+  "relation": {
+    "name": "question"
+  }
+}
+
+# Child: Answers
+PUT exam/_doc/3?refresh&routing=1
+{
+  "text": "Answer 1",
+  "relation": {
+    "name": "answer",
+    "parent": "1"
+  }
+}
+PUT exam/_doc/4?refresh&routing=1
+{
+  "text": "Answer 2",
+  "relation": {
+    "name": "answer",
+    "parent": "1"
+  }
+}
+PUT exam/_doc/5?refresh&routing=2
+{
+  "text": "Answer 3",
+  "relation": {
+    "name": "answer",
+    "parent": "2"
+  }
+}
+
+# Child: comment
+PUT exam/_doc/6?refresh&routing=1
+{
+  "text": "comment 1",
+  "relation": {
+    "name": "comment",
+    "parent": "1"
+  }
+}
+PUT exam/_doc/7?refresh&routing=2
+{
+  "text": "comment 2",
+  "relation": {
+    "name": "comment",
+    "parent": "2"
+  }
+}
+PUT exam/_doc/8?refresh&routing=2
+{
+  "text": "comment 3",
+  "relation": {
+    "name": "comment",
+    "parent": "2"
+  }
+}
+
+# Child: vote !!(這裡的 routing 是要填 question 的 _id)
+PUT exam/_doc/9?refresh&routing=2
+{
+  "text": "vote 1",
+  "relation": {
+    "name": "vote",
+    "parent": "5"
+  }
+}
+
+# 找出 question 的 text 包含 2 的 answer 與 comment
+GET exam/_search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "question",
+      "query": {
+        "match": {
+          "text": "2"
+        }
+      }
+    }
+  }
+}
+
+# 查詢出 answer 中擁有 vote 的 question，並使用 inner_hits 列出找尋的過程
+GET exam/_search
+{
+  "query": {
+    "has_child": {
+      "type": "answer",
+      "query": {
+        "has_child": {
+          "type": "vote",
+          "query": {
+            "match_all": {}
+          },
+          "inner_hits": {}
+        }
+      },
+      "inner_hits": {}
+    }
+  }
+}
+```
+
+### 2.2 事先定義好 Data Model
+
+#### Demo: Dynamic Template
+
+- 將 String 型態的欄位，定義成 `keyword`，而不是預設的 `text` + `keyword`。
+
+```
+PUT my-index/
+{
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "strings": {
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      }
+    ]
+  }
+}
+
+```
+
+- 將 String 型態的欄位，且欄位名字是 `long_` 開頭，同時不是 `_text` 結尾，就定義成 `long` 型態。
+
+```
+PUT my-index/
+{
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "longs_as_strings": {
+          "match_mapping_type": "string",
+          "match":   "long_*",
+          "unmatch": "*_text",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      }
+    ]
+  }
+}
+
+```
+
+- 將 `name` 物件裡除了 `middle` 之外的所有欄位，都 copy 到 `full_name` 的欄位，並指定為 `text` 型態。
+
+```
+PUT my-index
+{
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "full_name": {
+          "path_match":   "name.*",
+          "path_unmatch": "*.middle",
+          "mapping": {
+            "type":       "text",
+            "copy_to":    "full_name"
+          }
+        }
+      }
+    ]
+  }
+}
+
+PUT my-index/_doc/1
+{
+  "name": {
+    "first":  "John",
+    "middle": "Winston",
+    "last":   "Lennon"
+  }
+}
+```
+
+- 先針對字串欄位給予定義，再來針對所有非字串的欄位，關閉 `doc_values`。
+
+```
+PUT my-index
+{
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "named_analyzers": {
+          "match_mapping_type": "string",
+          "match": "*",
+          "mapping": {
+            "type": "text",
+            "analyzer": "{name}"
+          }
+        }
+      },
+      {
+        "no_doc_values": {
+          "match_mapping_type":"*",
+          "mapping": {
+            "type": "{dynamic_type}",
+            "doc_values": false
+          }
+        }
+      }
+    ]
+  }
+}
+
+PUT my-index/_doc/1
+{
+  "english": "Some English text", 
+  "count":   5 
+}
+```
+
+#### 練習：設定適合情境需求的 Dynamic Template
+
+```
+PUT _index_template/my_logs
+{
+  "index_patterns": [
+    "logs-*"
+  ],
+  "template": {
+    "mappings": {
+      "dynamic": "true",
+      "dynamic_templates": [
+        {
+          "string_message": {
+            "match_mapping_type": "string",
+            "match": "message",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "string_others": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "unindexed_longs": {
+            "match_mapping_type": "long",
+            "path_unmatch": "http.*",
+            "mapping": {
+              "type": "long",
+              "index": false
+            }
+          }
+        },
+        {
+          "unindexed_longs": {
+            "match_mapping_type": "double",
+            "path_unmatch": "http.*",
+            "mapping": {
+              "type": "float",
+              "index": false
+            }
+          }
+        }
+      ]
+    }
+  },
+  "priority": 500,
+  "version": 1,
+  "_meta": {
+    "description": "uncle joe's demo"
+  }
+}
+
+PUT logs-1/_doc/1
+{
+  "message": "fulltext search supported",
+  "id": "keyword",
+  "price": 12.34,
+  "volume": 123,
+  "http": {
+    "status": 200
+  }
+}
+
+GET logs-1
+```
+
+### 2.3 無法事先定義好 Data Model
+
+
+#### 情境題: 事先所定義的欄位不足，怎麼辦?
+
+- Searching 時指定 runtime field
+
+```
+# 定義 `@timestamp` 欄位為 date
+PUT rf_test
+{
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      }
+    }
+  }
+}
+
+# Import Test Data
+POST rf_test/_bulk?refresh=true
+{"index":{}}
+{"@timestamp":1516729294000,"model_number":"QVKC92Q","measures":{"voltage":"5.2","start": "300","end":"8675309"}}
+{"index":{}}
+{"@timestamp":1516642894000,"model_number":"QVKC92Q","measures":{"voltage":"5.8","start": "300","end":"8675309"}}
+{"index":{}}
+{"@timestamp":1516556494000,"model_number":"QVKC92Q","measures":{"voltage":"5.1","start": "300","end":"8675309"}}
+{"index":{}}
+{"@timestamp":1516470094000,"model_number":"QVKC92Q","measures":{"voltage":"5.6","start": "300","end":"8675309"}}
+{"index":{}}
+{"@timestamp":1516383694000,"model_number":"HG537PU","measures":{"voltage":"4.2","start": "400","end":"8625309"}}
+{"index":{}}
+{"@timestamp":1516297294000,"model_number":"HG537PU","measures":{"voltage":"4.0","start": "400","end":"8625309"}}
+
+GET rf_test
+
+# 定義 `runtime_mapping` 並編寫從 `doc_value` 將資料拿出並進行處理的規則。
+GET rf_test/_search
+{
+  "runtime_mappings": {
+    "day_of_week": {
+      "type": "keyword",
+      "script": {
+        "source": "emit(doc['@timestamp'].value.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT))"
+      }
+    }
+  },
+  "fields": [
+    "day_of_week"
+  ]
+}
+
+# 定義 `runtime_mapping` 並編寫從 `_source` 將資料拿出並進行處理的規則。
+GET rf_test/_search
+{
+  "runtime_mappings": {
+    "mode_number": {
+      "type": "keyword",
+      "script": {
+        "source": "emit(params._source.model_number)"
+      }
+    }
+  },
+  "fields": [
+    "model_number"
   ]
 }
 
 ```
 
-
-### Freeze
+- 將 runtime fields 的定義搬到 index mapping 中
 
 ```
-# import data
+# 使用 update mapping API 將 runtime fields 定義進 index mapping 之中
+PUT rf_test/_mapping
+{
+  "runtime": {
+    "day_of_week": {
+      "type": "keyword",
+      "script": {
+        "source": "emit(doc['@timestamp'].value.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT))"
+      }
+    }
+  },
+  "properties": {
+    "@timestamp": {
+      "type": "date"
+    }
+  }
+}
+
+# 使用 _search 將 fields 查出
+GET rf_test/_search?docvalue_fields=day_of_week
+
+```
+
+#### 當我們想將 Runtime Field 正式定義
+
+```
+# 定義一個新的 Index (用來儲存之後進來的資料)
+PUT rf_test_2
+{
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "day_of_week": {
+        "type": "keyword",
+        "on_script_error": "fail",
+        "script": {
+          "source": "emit(doc['@timestamp'].value.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT))"
+        }
+      }
+    }
+  }
+}
+
+# Import Test Data
+POST rf_test_2/_bulk?refresh=true
+{"index":{}}
+{"@timestamp":1516729294000,"model_number":"QVKC92Q","measures":{"voltage":"5.2","start": "300","end":"8675309"}}
+{"index":{}}
+{"@timestamp":1516642894000,"model_number":"QVKC92Q","measures":{"voltage":"5.8","start": "300","end":"8675309"}}
+{"index":{}}
+
+# 查詢 w/ fields
+GET rf_test_2/_search?docvalue_fields=day_of_week
+```
+
+#### Async Search
+
+```
+# 我們嘗試使用 _async_search 但是發現執行太快，不會觸發 async_search
+POST rf_test/_async_search
+{
+  "size": 0, 
+  "aggs": {
+    "test": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "fixed_interval": "2m"
+      }
+    }
+  }
+}
+
+# 強制執行 `wait_for_completion_timeout=0` 讓查詢立刻先返回，即出現 async_search id
+POST rf_test/_async_search?wait_for_completion_timeout=0
+{
+  "size": 0, 
+  "aggs": {
+    "test": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "fixed_interval": "2m"
+      }
+    }
+  }
+}
+
+# 使用 id 去查詢執行狀態
+GET _async_search/status/<responsed_async_search_id>
+
+# 再使用 id 去取得結果
+GET _async_search/<responsed_async_search_id>
+
+# 也可以使用 `keep_on_completion`
+POST rf_test/_async_search?keep_on_completion
+{
+  "size": 0, 
+  "aggs": {
+    "test": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "fixed_interval": "2m"
+      }
+    }
+  }
+}
+
+# 用完記得要刪除，不然會留 5 天
+DELETE _async_search/<responsed_async_search_id>
+
+
+# 可使用 .async_search 觀察 docs 數量的變化
+GET .async-search/_search?size=0
+```
+
+### 2.4 Data Model 的事後修改
+
+#### Update by Query
+
+```
+# 加上 `joe` 的 tag
+POST kibana_sample_data_logs/_update_by_query
+{
+  "script": {
+    "source": "ctx._source.tags.add(params.tag)",
+    "lang": "painless",
+    "params": {
+      "tag": "joe"
+    }
+  }, 
+  "query": {
+    "match_all": {}
+  }
+}
+
+# 移掉 `joe 的 tag，使用 `wait_for_completion=false` 成為 background task
+POST kibana_sample_data_logs/_update_by_query?wait_for_completion=false
+{
+  "script": {
+    "source": "if (ctx._source.tags.contains(params.tag)) { ctx._source.tags.remove(ctx._source.tags.indexOf(params.tag)) }",
+    "lang": "painless",
+    "params": {
+      "tag": "joe"
+    }
+  }, 
+  "query": {
+    "match_all": {}
+  }
+}
+
+# 取得 task 結果
+GET /_tasks/<task_id>
+
+```
+
+
+#### 情境題：將先前例子的 `day_of_week` 擷取出來
+
+```
+# 首先要將 Runtime field 移掉，並加上靜態的 day_of_week 定義
+PUT rf_test/_mapping
+{
+  "runtime": {
+    "day_of_week": null
+  },
+  "properties": {
+    "day_of_week": {
+      "type": "keyword"
+    }
+  }
+}
+
+# 接著使用 _update_by_query 將 day_of_week 擷取出來，並存放於 day_of_week 欄位中。
+POST rf_test/_update_by_query
+{
+  "script": {
+    "source": """
+long milliSinceEpoch = ctx._source.get('@timestamp');
+Instant instant = Instant.ofEpochMilli(milliSinceEpoch);
+ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.of('Z'));
+    ctx._source.day_of_week=zdt.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT)
+    """,
+    "lang": "painless"
+  }, 
+  "query": {
+    "match_all": {}
+  }
+}
+```
+
+#### Reindex API
+
+```
+# 建立新的 Index Mapping
+PUT rf_test_new
+{
+  "mappings": {
+    "properties": {
+      "day_of_week": {
+        "type": "keyword"
+      }
+    }
+  }
+}
+
+# 執行 Reindex
 POST _reindex
 {
   "source": {
-    "index": "top_rated_movies"
+    "index": "rf_test"
   },
   "dest": {
-    "index": "freeze"
+    "index": "rf_test_new"
   },
   "script": {
-    "source": "ctx._id=null",
+    "source": """
+long milliSinceEpoch = ctx._source.get('@timestamp');
+Instant instant = Instant.ofEpochMilli(milliSinceEpoch);
+ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.of('Z'));
+    ctx._source.day_of_week=zdt.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT)
+    """,
     "lang": "painless"
   }
 }
 
-GET freeze/_search
-
-POST /freeze/_freeze
-
-# after freezed index, cannot search data
-GET freeze/_search
-
-
-# unfreeze
-POST freeze/_unfreeze
-
-```
-
-- how to search frozen index
-
-```
-# Kibana: Stack Management > Advanced Settings > Search in frozen indices
-
-# add ignore_throttled
-GET freeze/_search?ignore_throttled=false
+# 查看結果
+GET rf_test_new/_search
 ```
 
 
-### Searchable Snapshot
+## 2. Data Ingestion
 
-#### Prepare Repository for searchable snapshot
+### 2.1 Ingest Pipeline
 
-- add `path.repo` in `elasticsearch.yml` on each node.
-
-```
-path.repo: ["/var/tmp/elastic"]
-
-```
-
-- restart all nodes.
-
-#### Create Searchable Snapshot on Kibana
-
-- go to kibana > stack management > data > snapshot and restore > repositorys to register new repository.
-
-
-- mount searchable snapshot with fully mounted
-
-```
-POST /_snapshot/demo/daily-snapshot-2021.10.20-aq4f2xodq7efc8vd4iswya/_mount?wait_for_completion=true
-{
-  "index": "movies", 
-  "renamed_index": "ss_movies", 
-  "index_settings": { 
-    "index.number_of_replicas": 0
-  }
-}
-```
-
-- search from searchable snapshot
-
-```
-GET ss_movies/_search
-```
-
-- we can also reindex from searchable snapshot
-
-```
-POST _reindex
-{
-  "source": {
-    "index": "ss_movies"
-  },
-  "dest": {
-    "index": "movies"
-  }
-}
-```
-
-- mount searchable snapshot with partial mounted
-
-```
-DELETE ss_movies
-
-POST /_snapshot/demo/daily-snapshot-2021.10.20-aq4f2xodq7efc8vd4iswya/_mount?wait_for_completion=true&storage=shared_cache
-{
-  "index": "movies", 
-  "renamed_index": "ss_movies", 
-  "index_settings": { 
-    "index.number_of_replicas": 0
-  }
-}
-```
-
-- query will failed due to no available shared cache
-
-```
-GET ss_movies/_search
-```
-
-- update `elasticsearch.yml` to setup shared cache
-
-```
-xpack.searchable.snapshot.shared_cache.size: 10MB
-```
-
-- after restart ES, we can search now.
-
-```
-GET ss_movies/_search
-```
-
-- we can also check cache stats of searchable snapshot
-
-```
-GET /_searchable_snapshots/cache/stats
-```
-
-
-### Data Stream
-
-```
-# create data stream but failed
-PUT /_data_stream/my-data-stream
-
-# create index template w/ data stream declaration
-PUT _index_template/ds-test
-{
-  "index_patterns": [
-    "my-data-stream*"
-  ],
-  "data_stream": {},
-  "template": {
-    "settings": {
-      "number_of_shards": 3,
-      "number_of_replicas": 1
-    }
-  }
-}
-
-# this step is optional
-PUT /_data_stream/my-data-stream
-
-GET my-data-stream/_settings
-
-# must declare op_type=create
-PUT my-data-stream/_doc/1
-{}
-
-# must provide timestamp
-PUT my-data-stream/_doc/1?op_type=create
-{}
-
-PUT my-data-stream/_doc/1?op_type=create
-{
-  "@timestamp": "2021-10-20T00:00:00"
-}
-
-# search data
-GET my-data-stream/_search
-
-# unable to delete backing index
-DELETE .ds-my-data-stream-2021.10.15-000001
-
-# delete data stream
-DELETE _data_stream/my-data-stream
-
-```
-
-### Create ILM
-
-#### Create ILM on Kibana
-
-1. create demo-ilm
-
-2. Hot
-
-- Rollover on 10 docs
-- enable Force Merge: 1 segment only
-- Shrink to 1 shard
-- Read only
-
-3. Warm
-
-- Move data into phase when 1 minute
-- Replicas: 1
-- Read only
-
-4. Cold
-
-- Move data into phase when 2 minute
-- Freeze
-
-5. Frozen
-
-- Move data into phase when 3 minute
-- Searchable snapshot
-
-6. Delete
-
-- After 10 minutes
-
-#### Create Index Template on Kibana
-
-1. create index template
-
-- Name: ilm-demo
-- Idnex pattern: ilm-demo*
-- Data stream: true
-- Priority: 100
-- Version: 1
-
-- Setup Index Settings
-
-```
-{
-  "number_of_shards": 8
-}
-```
-
-#### Back to ILM and apply to Index Template
-
-- apply to: ilm-demo
-- alias for rollover: ilm-demo
-
-#### Indexing Docs
-
-```
-POST ilm-demo/_doc/
-{
-  "@timestamp": "2021-10-20T00:00:00"
-}
-
-```
-
-- option 2: index + alias case, we have to manual create first rolling index.
-
-```
-# manual create first rolling index (only for index w/ alias case, no need for data stream)
-PUT joe-test-000001
-{
-  "aliases": {
-    "joe-test": {
-      "is_write_index": true
-    }
-  }
-}
-```
-
-#### Setup ILM Poll Interval for DEMO
-
-```
-# ILM related settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-settings.html
-PUT _cluster/settings
-{
-  "transient": {
-    "indices.lifecycle.poll_interval": "10s"
-  }
-}
-
-POST ilm-demo/_doc/
-{
-  "@timestamp": "2021-10-20T01:00:00"
-}
-
-```
-
-#### keep indexing & check index status
-
-```
-GET ilm-demo/_ilm/explain
-
-POST ilm-demo/_doc/?refresh=true
-{
-  "@timestamp": "2021-10-20T00:00:00"
-}
-
-GET ilm-demo/_search
-
-GET _cat/indices/*demo*?v
-# check for rollover (after poll interver)
-# check for shrink (after 1 mins)
-
-# after index covert to frozen index
-GET ilm-demo/_search?ignore_throttled=false
-
-# after some data moving to searchable snapshop, index will be renamed to partial-shard-xxxxx
-
-
-# tips: monitor specific index
-GET ilm-demo/_ilm/explain?filter_path=*.*003.*
-GET .*demo*008/_search
-
-GET _cat/segments?index=*demo*&v
-```
-
-## Ingest Pipeline
-
-### Dissect
-
-- also create on Kibana
+#### Dissect (demo: create on Kibana as well)
 
 ```
 
@@ -1679,7 +1730,6 @@ POST _ingest/pipeline/_simulate
 
 
 ```
-
 
 ### Grok
 
@@ -1720,10 +1770,7 @@ POST _ingest/pipeline/_simulate
 
 ```
 
-
 ### GeoIP
-
-- 可以在 kibana 直接操作
 
 ```
 PUT _ingest/pipeline/geoip
@@ -1745,6 +1792,7 @@ GET geoiop_test/_doc/1
 
 ```
 
+- 在 kibana 再次操作上面的例子
 - testing data for kibana UI
 
 ```
@@ -1757,7 +1805,7 @@ GET geoiop_test/_doc/1
 ]
 ```
 
-### uriparts
+### Others: `uri_parts`
 
 ```
 # create uri_parts on Kibana
@@ -1775,7 +1823,7 @@ PUT _ingest/pipeline/uri_parts
 
 ```
 
-### Pipeline
+### Pipeline (Kibana UI)
 
 ```
 # add dissect, geoip, uri_parts
@@ -1876,41 +1924,1235 @@ GET test_user_lookup/_search
 ```
 
 
+## 4. Security
+
+### 4.2 Elasticsearch Security Setup
+
+#### Enable Elasticsearch Security in Elasticsearch
+
+- 為了避免進入 Production Mode，先使用單機
+- 為了避免 8.0 最新的自動設定 Security 的流程，我們先啟動一次關閉 Security，讓 Cluster 先初始化
+
+```
+./bin/elasticsearch -E xpack.security.enabled=false
+```
+
+- 接著我們重新啟動，這次把 `security.enabled` 打開。
+- 如果是 8.0 預設會打開，只要不要加啟動時的參數即可。
+- 如果是 7.x 版，要在 `elasticsearch.yml` 設定打啟。
+
+```
+xpack.security.enabled: true
+```
+
+- 這時啟動過就會自動在 config 路徑產生 keystore。
+- (如果啟動前就想手動產生，可以使用以下指令)
+  - create keystore to generate `keystore.seed` (default password in es)
+  ```
+  ./bin/elasticsearch-keystore create
+  ```
+
+- 接下來查看預設 keystore 的內容。
+
+```
+./bin/elasticsearch-keystore list
+./bin/elasticsearch-keystore show keystore.seed
+```
+
+- setup default password in `bootstrap.password` in keystore (optional)
+
+```
+./bin/elasticsearch-keystore add bootstrap.password
+```
+
+- 需要重新啟動 elasticsearch，載入 keystore，讓密碼生效
+
+- 接著也可以使用 elasticsearch-reset-password 來修改密碼
+
+```
+./bin/elasticsearch-reset-password -u elastic
+```
+
+#### Setup Kibana Credentials
+
+- 先在 elasticsearch 建立 `kibana_system` 帳號
+
+```
+./bin/elasticsearch-reset-password -u kibana_system
+```
+
+- setup password in keystore
+
+```
+./bin/kibana-keystore create
+./bin/kibana-keystore add elasticsearch.password
+```
+
+- setup username in kibana.yml
+```
+elasticsearch.username: "kibana_system"
+```
+
+- start Kibana
+
+#### Enable TLS for ES transport(TCP) communication
+
+- create ca
+```
+./bin/elasticsearch-certutil ca
+```
+
+- create certificate for TLS
+```
+./bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
+```
+
+- copy elastic-certificates.p12 in ES's config folder on each ES nodes.
+
+- add settings below in `elasticsearch.yml`
+
+```
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate 
+xpack.security.transport.ssl.client_authentication: required
+xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
+```
+
+- setup the password of certificate in keystore on each ES nodes.
+
+```
+./bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password
+./bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password
+```
+
+#### Enable TLS for ES HTTP communication
+
+- generate http
+
+```
+./bin/elasticsearch-certutil http
+
+# Use an existing CA? [y/N]y
+```
+
+- unzip `elasticsearch-ssl-http.zip`
+- copy `elasticsearch/http.p12` in ES' config folder on each ES nodes.
+- copy `kibana/elasticsearch-ca.pem` in Kibana's config folder.
+- add settings below in `elasticsearch.yml`
+
+```
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.keystore.path: http.p12
+```
+
+- setup the password of certificate in keystore on each ES nodes.
+
+```
+./bin/elasticsearch-keystore add xpack.security.http.ssl.keystore.secure_password
+```
+
+- modify `kibana.yml` to trust CA and access ES via HTTPS
+
+```
+elasticsearch.ssl.certificateAuthorities: $KBN_PATH_CONF/elasticsearch-ca.pem
+
+elasticsearch.hosts: https://<your_elasticsearch_host>:9200
+```
+
+#### 練習： 建立安全的 Cluster
+
+- 直接使用 8.0 auto configured security 啟動新 node
+- 注意: 不要設定其他 transport, discovery 等設定，以免啟用 production mode
+
+```
+cluster.name: secure-cluster
+node.name: node-1
+```
+
+- 透過 console 的 enrollment token 啟動第二台 node 與 kibana
+
+- 建立一組新的 enrollment token
+
+```
+bin/elasticsearch-create-enrollment-token -s node
+```
+
+- 將第一個 node 的 transport 對外開放，修改 `elasticsearch.yml`
+
+```
+transport.host: [_local_, _site_]
+```
+
+- 重啟第一台 node
+
+- 讓第三台 node 啟動
+
+```
+bin/elasticsearch -E cluster.name=secure-cluster -E node.name=node-2 --enrollment-token <token>
+```
+
+### 4.3 Role-Based Access Control
+
+#### 練習: 依照 e-commerce 客服部需求，建立 RBAC
+
+1. create new space - Customer Support 
+with previliges below
+ - Kibana Discover
+
+2. create role - customer_support
+
+- indices: kibana_sample_data_ecommerce
+- privileges: read
+
+- Kibana privileges: Discover(All)
+
+3. create user - joe
+
+- assigne role: customer_support
+
+4. 進階需求.... (要 License)
+
+- 開啟後可 grant for `*` but deny for `products.min_price`.
+
+
+### 4.4 Snapshot & Restore
+
+#### Shapsnot Repository
+
+- 使用 3 nodes cluster.
+- add `path.repo` in `elasticsearch.yml` on node 1 & 2. (not node 3)
+
+```
+path.repo: ["/var/tmp/elastic"]
+
+```
+
+- restart all nodes.
+
+- 使用 kibana / Stack Management / Snapshot and Restore 建立 Repository
+
+- 使用 verify repository 的功能，可以發現 node3 發生錯誤
+
+- 再將 node 3 加入 repo 並重啟。
+
+- 重試 verify repository
+
+#### 建立 Snapshot 
+
+- 使用 kibana sample data
+
+- 在 kibana / Stack Management / Snapshot and Restore 建立 Snapshot Policy
+
+- 最短 15 分鐘執行一次
+
+```
+0 0/15 * * * ?
+```
+
+#### 練習：替 Kibana Sample Data 建立備份策略
+
+- 依照步驟在 Kibana 上操作。
 
 
 
+## 3. 資料生命週期管理 (Data Lifecycle Management)
+
+### 3.2 ILM 
+
+#### Rollover API
+
+```
+# ----- Preparation -----
+# PUT <ro-{now/d}-000001>
+PUT %3Cro-%7Bnow%2Fd%7D-000001%3E
+{
+  "aliases": {
+    "ro": {
+      "is_write_index": true
+    }
+  }
+}
+
+GET _alias/ro
+GET ro/_search
+
+# ----- Rollover -----
+# first try
+POST ro/_rollover
+{
+  "conditions": {
+    "max_age": "5m",
+    "max_docs": 10,
+    "max_primary_shard_size": "1mb"
+  }
+}
+
+# import data
+POST _reindex
+{
+  "source": {
+    "index": "top_rated_movies"
+  },
+  "dest": {
+    "index": "ro"
+  },
+  "script": {
+    "source": "ctx._id=null",
+    "lang": "painless"
+  }
+}
+
+# second try, meet criteria and perform rollover
+POST ro/_rollover
+{
+  "conditions": {
+    "max_age": "5m",
+    "max_docs": 10,
+    "max_primary_shard_size": "1mb"
+  }
+}
+
+# check index & alias status
+GET _alias/ro
+
+```
+
+#### Shrink API
+
+```
+# 建立 shrink_v1 index & alias
+PUT shrink_v1
+{
+  "settings": {
+    "number_of_shards": 8
+  }, 
+  "aliases": {
+    "shrink": {
+      "is_write_index": true
+    }
+  }
+}
+
+# 產生假資料 (多跑幾次)
+POST _reindex
+{
+  "source": {
+    "index": "top_rated_movies"
+  },
+  "dest": {
+    "index": "shrink_v1"
+  },
+  "script": {
+    "source": "ctx._id=null",
+    "lang": "painless"
+  }
+}
+
+# 查看資料
+GET shrink/_search
+
+# 非因數不能使用
+POST shrink_v1/_shrink/shrink_v2
+ {
+   "settings": {
+     "index.number_of_shards": 3,
+     "index.codec": "best_compression"
+   },
+   "aliases": {
+     "shrink": {}
+   }
+}
+
+# 將 index 設為唯讀
+PUT shrink_v1/_settings
+{
+  "index.blocks.write": true
+}
+
+# 執行 shrink (8->4)
+POST shrink_v1/_shrink/shrink_v2
+ {
+   "settings": {
+     "index.number_of_shards": 4,
+     "index.codec": "best_compression"
+   },
+   "aliases": {
+     "shrink": {}
+   }
+}
+
+# 執行 shrink (8->2)
+POST shrink_v1/_shrink/shrink_v3
+ {
+   "settings": {
+     "index.number_of_shards": 2,
+     "index.codec": "best_compression"
+   },
+   "aliases": {
+     "shrink": {}
+   }
+}
+
+# 執行 shrink (8->1)
+POST shrink_v1/_shrink/shrink_v4
+ {
+   "settings": {
+     "index.number_of_shards": 1,
+     "index.codec": "best_compression"
+   },
+   "aliases": {
+     "shrink": {}
+   }
+}
+
+# 查看結果
+GET _cat/indices/shrink*?v
+GET _cat/segments/shrink*?v&s=index
+
+# 清理資料
+# DELETE shrink*
+
+```
+
+#### Force Merge
+
+```
+POST shrink_v4/_forcemerge?max_num_segments=1
+```
+
+#### Custom Allocation
+
+- add `node.attr` in `elasticsearch.yml`
+
+```
+# node-1
+node.attr.rack: r1
+node.attr.pet: cat
+
+# node-2
+node.attr.rack: r2
+node.attr.pet: dog
+```
+
+- restart ES & check node attributes
+
+```
+GET _cat/nodeattrs?v
+```
+
+- create index w/ `index.routing.allocation` settings.
+
+```
+
+# create index
+PUT attr_test
+{
+  "settings": {
+    "number_of_shards": 5, 
+    "number_of_replicas": 1, 
+    "index.routing.allocation.include.rack": "r1,r2",
+    "index.routing.allocation.exclude.pet": "dog"
+  }
+}
+
+GET _cat/shards/attr_test?v
+
+GET _cluster/allocation/explain
+
+# not working
+PUT attr_test/_settings
+{
+  "index.routing.allocation.include.rack": "r1,r2"
+}
+
+# because attributes have not been removed
+GET attr_test/_settings?include_defaults=true&filter_path=**.routing.**
+
+PUT attr_test/_settings
+{
+  "index.routing.allocation.include.rack": "r1,r2",
+  "index.routing.allocation.exclude.pet": null
+}
+
+GET _cat/shards/attr_test?v
+
+# [備用補充] 如果要反向的話，要手動移掉已分派好的 shards
+
+POST /_cluster/reroute
+{
+  "commands": [
+    {
+      "cancel": {
+        "index": "attr_test",
+        "shard": 4,
+        "node": "node-2"
+      }
+    }
+  ]
+}
+
+```
 
 
+#### Freeze
+
+```
+# import data
+POST _reindex
+{
+  "source": {
+    "index": "top_rated_movies"
+  },
+  "dest": {
+    "index": "freeze"
+  },
+  "script": {
+    "source": "ctx._id=null",
+    "lang": "painless"
+  }
+}
+
+GET freeze/_search
+
+POST /freeze/_freeze
+
+# after freezed index, cannot search data
+GET freeze/_search
 
 
+# unfreeze
+POST freeze/_unfreeze
+
+```
+
+- how to search frozen index
+
+```
+# Kibana: Stack Management > Advanced Settings > Search in frozen indices
+
+# add ignore_throttled
+GET freeze/_search?ignore_throttled=false
+```
 
 
+#### Searchable Snapshot
+
+##### Prepare Repository for searchable snapshot
+
+- add `path.repo` in `elasticsearch.yml` on each node.
+
+```
+path.repo: ["/var/tmp/elastic"]
+
+```
+
+- restart all nodes.
+
+##### Create Searchable Snapshot on Kibana
+
+- go to kibana > stack management > data > snapshot and restore > repositorys to register new repository.
 
 
+- mount searchable snapshot with fully mounted
+
+```
+POST /_snapshot/demo/daily-snapshot-2021.10.20-aq4f2xodq7efc8vd4iswya/_mount?wait_for_completion=true
+{
+  "index": "movies", 
+  "renamed_index": "ss_movies", 
+  "index_settings": { 
+    "index.number_of_replicas": 0
+  }
+}
+```
+
+- search from searchable snapshot
+
+```
+GET ss_movies/_search
+```
+
+- we can also reindex from searchable snapshot
+
+```
+POST _reindex
+{
+  "source": {
+    "index": "ss_movies"
+  },
+  "dest": {
+    "index": "movies"
+  }
+}
+```
+
+- mount searchable snapshot with partial mounted
+
+```
+DELETE ss_movies
+
+POST /_snapshot/demo/daily-snapshot-2021.10.20-aq4f2xodq7efc8vd4iswya/_mount?wait_for_completion=true&storage=shared_cache
+{
+  "index": "movies", 
+  "renamed_index": "ss_movies", 
+  "index_settings": { 
+    "index.number_of_replicas": 0
+  }
+}
+```
+
+- query will failed due to no available shared cache
+
+```
+GET ss_movies/_search
+```
+
+- update `elasticsearch.yml` to setup shared cache
+
+```
+xpack.searchable.snapshot.shared_cache.size: 10MB
+```
+
+- after restart ES, we can search now.
+
+```
+GET ss_movies/_search
+```
+
+- we can also check cache stats of searchable snapshot
+
+```
+GET /_searchable_snapshots/cache/stats
+```
 
 
+#### Data Stream
+
+```
+# create data stream but failed
+PUT /_data_stream/my-data-stream
+
+# create index template w/ data stream declaration
+PUT _index_template/ds-test
+{
+  "index_patterns": [
+    "my-data-stream*"
+  ],
+  "data_stream": {},
+  "template": {
+    "settings": {
+      "number_of_shards": 3,
+      "number_of_replicas": 1
+    }
+  }
+}
+
+# this step is optional
+PUT /_data_stream/my-data-stream
+
+GET my-data-stream/_settings
+
+# must declare op_type=create
+PUT my-data-stream/_doc/1
+{}
+
+# must provide timestamp
+PUT my-data-stream/_doc/1?op_type=create
+{}
+
+PUT my-data-stream/_doc/1?op_type=create
+{
+  "@timestamp": "2021-10-20T00:00:00"
+}
+
+# search data
+GET my-data-stream/_search
+
+# unable to delete backing index
+DELETE .ds-my-data-stream-2021.10.15-000001
+
+# delete data stream
+DELETE _data_stream/my-data-stream
+
+```
+
+#### Demo:Create ILM
+
+##### Create ILM on Kibana
+
+1. create demo-ilm
+
+2. Hot
+
+- Rollover on 10 docs
+- enable Force Merge: 1 segment only
+- Shrink to 1 shard
+- Read only
+
+3. Warm
+
+- Move data into phase when 1 minute
+- Replicas: 1
+- Read only
+
+4. Cold
+
+- Move data into phase when 2 minute
+- Freeze
+
+5. Frozen
+
+- Move data into phase when 3 minute
+- Searchable snapshot
+
+6. Delete
+
+- After 10 minutes
+
+##### Create Index Template on Kibana
+
+1. create index template
+
+- Name: ilm-demo
+- Idnex pattern: ilm-demo*
+- Data stream: true
+- Priority: 100
+- Version: 1
+
+- Setup Index Settings
+
+```
+{
+  "number_of_shards": 8
+}
+```
+
+##### Back to ILM and apply to Index Template
+
+- apply to: ilm-demo
+- alias for rollover: ilm-demo
+
+##### Indexing Docs
+
+```
+POST ilm-demo/_doc/
+{
+  "@timestamp": "2021-10-20T00:00:00"
+}
+
+```
+
+- option 2: index + alias case, we have to manual create first rolling index.
+
+```
+# manual create first rolling index (only for index w/ alias case, no need for data stream)
+PUT joe-test-000001
+{
+  "aliases": {
+    "joe-test": {
+      "is_write_index": true
+    }
+  }
+}
+```
+
+##### Setup ILM Poll Interval for Demo
+
+```
+# ILM related settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-settings.html
+PUT _cluster/settings
+{
+  "transient": {
+    "indices.lifecycle.poll_interval": "10s"
+  }
+}
+
+POST ilm-demo/_doc/
+{
+  "@timestamp": "2021-10-20T01:00:00"
+}
+
+```
+
+##### keep indexing & check index status
+
+```
+GET ilm-demo/_ilm/explain
+
+POST ilm-demo/_doc/?refresh=true
+{
+  "@timestamp": "2021-10-20T00:00:00"
+}
+
+GET ilm-demo/_search
+
+GET _cat/indices/*demo*?v
+# check for rollover (after poll interver)
+# check for shrink (after 1 mins)
+
+# after index covert to frozen index
+GET ilm-demo/_search?ignore_throttled=false
+
+# after some data moving to searchable snapshop, index will be renamed to partial-shard-xxxxx
 
 
+# tips: monitor specific index
+GET ilm-demo/_ilm/explain?filter_path=*.*003.*
+GET .*demo*008/_search
+
+GET _cat/segments?index=*demo*&v
+```
+
+### 3.3 Rollup & Transform
+
+#### Demo: E-Commerce 每日訂單報表
+
+- 先在 Kibana 建立 Rollup Job 並執行，等 1 分鐘執行完成。
+- latency 設定 30s
+- interval 設定 30s
+
+```
+# 試一個失敗的例子
+POST daily_rollup_ecommerce/_rollup_search
+{
+  "size": 0,
+  "aggs": {
+    "product_summary": {
+      "date_histogram": {
+        "field": "order_date",
+        "fixed_interval": "300m"
+      },
+      "aggs": {
+        "taxful_sum": {
+          "sum": {
+            "field": "taxful_total_price"
+          }
+        },
+        "taxless_sum": {
+          "sum": {
+            "field": "taxless_total_price"
+          }
+        }
+      }
+    }
+  }
+}
+
+GET kibana_sample_data_ecommerce/_search
+{
+  "size": 0,
+  "aggs": {
+    "product_summary": {
+      "date_histogram": {
+        "field": "order_date",
+        "fixed_interval": "300m"
+      },
+      "aggs": {
+        "taxful_sum": {
+          "sum": {
+            "field": "taxful_total_price"
+          }
+        },
+        "taxless_sum": {
+          "sum": {
+            "field": "taxless_total_price"
+          }
+        }
+      }
+    }
+  }
+}
+
+# 要使用 category terms，這樣才和 rollup 定義的一樣 
+POST daily_rollup_ecommerce/_rollup_search
+{
+  "size": 0,
+  "aggs": {
+    "product_summary": {
+      "date_histogram": {
+        "field": "order_date",
+        "fixed_interval": "300m"
+      },
+      "aggs": {
+        "category": {
+          "terms": {
+            "field": "category.keyword",
+            "size": 10
+          },
+          "aggs": {
+            "taxful_sum": {
+              "sum": {
+                "field": "taxful_total_price"
+              }
+            },
+            "taxless_sum": {
+              "sum": {
+                "field": "taxless_total_price"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+GET kibana_sample_data_ecommerce/_search
+{
+  "size": 0,
+  "aggs": {
+    "product_summary": {
+      "date_histogram": {
+        "field": "order_date",
+        "fixed_interval": "300m"
+      },
+      "aggs": {
+        "category": {
+          "terms": {
+            "field": "category.keyword",
+            "size": 10
+          },
+          "aggs": {
+            "taxful_sum": {
+              "sum": {
+                "field": "taxful_total_price"
+              }
+            },
+            "taxless_sum": {
+              "sum": {
+                "field": "taxless_total_price"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# 甚至合併 index 一起查詢，結果是會被 deduplicate 的
+POST daily_rollup_ecommerce,kibana_sample_data_ecommerce/_rollup_search
+{
+  "size": 0,
+  "aggs": {
+    "product_summary": {
+      "date_histogram": {
+        "field": "order_date",
+        "fixed_interval": "300m"
+      },
+      "aggs": {
+        "taxful_sum": {
+          "sum": {
+            "field": "taxful_total_price"
+          }
+        },
+        "taxless_sum": {
+          "sum": {
+            "field": "taxless_total_price"
+          }
+        }
+      }
+    }
+  }
+}
+
+```
+
+#### Demo: Transform - `pivot`
+
+- 示範使用 Kibana 操作
+
+```
+PUT _transform/ecommerce_transform1
+{
+  "source": {
+    "index": "kibana_sample_data_ecommerce",
+    "query": {
+      "term": {
+        "geoip.continent_name": {
+          "value": "Asia"
+        }
+      }
+    }
+  },
+  "pivot": {
+    "group_by": {
+      "customer_id": {
+        "terms": {
+          "field": "customer_id"
+        }
+      }
+    },
+    "aggregations": {
+      "max_price": {
+        "max": {
+          "field": "taxful_total_price"
+        }
+      }
+    }
+  },
+  "description": "Maximum priced ecommerce data by customer_id in Asia",
+  "dest": {
+    "index": "kibana_sample_data_ecommerce_transform1",
+    "pipeline": "add_timestamp_pipeline"
+  },
+  "frequency": "5m",
+  "sync": {
+    "time": {
+      "field": "order_date",
+      "delay": "60s"
+    }
+  },
+  "retention_policy": {
+    "time": {
+      "field": "order_date",
+      "max_age": "30d"
+    }
+  }
+}
+```
+
+#### Demo: Transform - `latest`
+
+```
+PUT _transform/ecommerce_transform2
+{
+  "source": {
+    "index": "kibana_sample_data_ecommerce"
+  },
+  "latest": {
+    "unique_key": ["customer_id"],
+    "sort": "order_date"
+  },
+  "description": "Latest order for each customer",
+  "dest": {
+    "index": "kibana_sample_data_ecommerce_transform2"
+  },
+  "frequency": "5m",
+  "sync": {
+    "time": {
+      "field": "order_date",
+      "delay": "60s"
+    }
+  }
+}
+```
+
+#### (備用) 另一個例子
+
+- Latest Demo
+
+```
+PUT _transform/demo-transform-ecommerce
+{
+  "source": {
+    "index": [
+      "kibana_sample_data_ecommerce"
+    ]
+  },
+  "latest": {
+    "unique_key": [
+      "order_id"
+    ],
+    "sort": "order_date"
+  },
+  "description": "demo",
+  "frequency": "1m",
+  "dest": {
+    "index": "demo-transform-ecommerce"
+  },
+  "sync": {
+    "time": {
+      "field": "order_date",
+      "delay": "10s"
+    }
+  },
+  "retention_policy": {
+    "time": {
+      "field": "order_date",
+      "max_age": "120s"
+    }
+  },
+  "settings": {
+    "max_page_search_size": 500
+  }
+}
+
+```
+
+- Pivot Demo
+
+```
+PUT _transform/demo-transform-aggs-ecommerce
+{
+  "source": {
+    "index": [
+      "kibana_sample_data_ecommerce"
+    ]
+  },
+  "pivot": {
+    "group_by": {
+      "category": {
+        "terms": {
+          "field": "category.keyword"
+        }
+      },
+      "customer_gender": {
+        "terms": {
+          "field": "customer_gender"
+        }
+      }
+    },
+    "aggregations": {
+      "taxful_total_price.sum": {
+        "sum": {
+          "field": "taxful_total_price"
+        }
+      },
+      "taxless_total_price.sum": {
+        "sum": {
+          "field": "taxless_total_price"
+        }
+      }
+    }
+  },
+  "description": "demo",
+  "frequency": "1m",
+  "dest": {
+    "index": "demo-transform-aggs-ecommerce"
+  },
+  "sync": {
+    "time": {
+      "field": "order_date",
+      "delay": "60s"
+    }
+  },
+  "retention_policy": {
+    "time": {
+      "field": "order_date",
+      "max_age": "120s"
+    }
+  },
+  "settings": {
+    "max_page_search_size": 500
+  }
+}
+
+```
+
+## 6. 效能最佳化
+
+### JVM Heap Usage
+
+#### 如何查看 Cluster Cache 的狀態
+
+```
+# Fielddata 的狀態
+GET /_cat/nodes?v&h=name,fielddataMemory,fielddataEvictions
+
+# Fielddata Circuit Breaker 狀態
+GET /_nodes/stats/breaker?filter_path=nodes.*.breakers.fielddata
+
+# Query Cache 與 Request Cache
+GET /_cat/nodes?v&h=name,queryCacheMemory,queryCacheEvictions,requestCacheMemory,requestCacheHitCount,request_cache.miss_count
+
+# Segments, Fielddata, Query Cache, Request Cache 一覽
+GET /_cat/nodes?v&h=name,port,segments.memory,segments.index_writer_memory,fielddata.memory_size,query_cache.memory_size,request_cache.memory_size
+```
+
+#### Filter Cache
+
+```
+# 查看 filter cache hit rate.
+GET /_nodes/stats/indices/query_cache?human
+```
+
+## 7. 正式環境的運維及管理技巧
+
+### 7.2 Elasticsearch Monitoring
+
+#### Stats APIs
+
+```
+# Cluster stats
+GET _cluster/stats
+
+# Node Stats
+GET _nodes/stats
+
+# Index Stats
+GET kibana_*/_stats
 
 
+```
+
+#### Slow log
+
+```
+PUT /test/_settings
+{
+  "index.indexing.slowlog": {
+    "threshold.index.warn": "10s",
+    "threshold.index.info": "5s",
+    "threshold.index.debug": "2s",
+    "threshold.index.trace": "500ms",
+    "source": "1000" 
+  },
+  "index.search.slowlog.threshold": {
+    "query.warn": "10s",
+    "query.info": "5s",
+    "query.debug": "2s",
+    "query.trace": "500ms",
+    "fetch.warn": "10s",
+    "fetch.info": "5s",
+    "fetch.debug": "2s",
+    "fetch.trace": "500ms"
+  }
+}
+
+```
+
+#### Metricbeat for collecting ES metrics
+
+- Init Metricbeat
+
+```
+metricbeat modules enable elasticsearch-xpack
+```
+
+- add all nodes hosts in modules' config 
+
+```
+output.elasticsearch:
+  hosts: ["http://localhost:9200", "http://localhost:9201", "http://localhost:9202"]
+  # Optional protocol and basic auth credentials.
+  #protocol: "https"
+  #username: "elastic"
+  #password: "changeme"
+```
+
+- start metricbeat
+
+```
+sudo chown root metricbeat.yml 
+# 順便給預設的 system module 權限
+sudo chown root modules.d/system.yml 
+sudo chown root modules.d/elasticsearch-xpack.yml 
+sudo ./metricbeat -e
+```
 
 
+#### Filebeat for collecting ES logs
 
-
-### Elasticsearch Monitoring
-
-
-#### Filebeat
-
-Init Filebeat
+- Init Filebeat
 
 ```
 ./filebeat setup -e
 ./filebeat modules enable elasticsearch
 ```
 
-
-Modify the config of elasticsearch module at `<FILEBEAT_PATH>/modules.d/elasticsearch.yml`
+- Modify the config of elasticsearch module at `<FILEBEAT_PATH>/modules.d/elasticsearch.yml`
 
 ```
 # Module: elasticsearch
@@ -1957,9 +3199,139 @@ Modify the config of elasticsearch module at `<FILEBEAT_PATH>/modules.d/elastics
       - /Users/joecwu/Training/elasticsearch-*/logs*/*_deprecation.json
 ```
 
-Start Filebeat.
+- Start Filebeat.
+
 ```
 ./filebeat -e
+```
+
+#### Metricbeat for collecting beats metrics
+
+```
+./metricbeat modules enable beat-xpack
+```
+
+- setup HTTP endpoints in metricbeat.yml
+
+```
+http.enabled: true
+http.port: 5066
+```
+
+- setup HTTP endpoints in filebeat.yml
+
+```
+http.enabled: true
+http.port: 5067
+```
+
+- add metricbeat & filebeat endpoints in ./modules.d/beat-xpack.yml
+
+```
+# Module: beat
+# Docs: https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-module-beat.html
+
+- module: beat
+  xpack.enabled: true
+  period: 10s
+  hosts: ["http://localhost:5066", "http://localhost:5067"]
+  #username: "user"
+  #password: "secret"
+```
+
+- grant root permission
+
+```
+sudo chown root modules.d/beat-xpack.yml 
+```
+
+- start metricbeat
+
+```
+sudo ./metricbeat -e
+```
+
+### 7.3 Circuit Breaker
+
+```
+# 查看 Circuit Breakers 的狀態
+GET /_nodes/stats/breaker
+
+
+# 查看 Circuit Breakers 相關的設定
+GET /_cluster/settings?include_defaults=true&flat_settings&filter_path=*.*breaker*
+```
+
+
+### 7.4 Cluster 常見的問題與解決方式
+
+#### CPU 飆高
+
+```
+#觀察 CPU usage
+GET _cat/nodes?v=true&s=cpu:desc
+
+
+#觀察 hot_threads by nodes
+GET _nodes/es-node1,es-node2/hot_threads
+
+# check long running task
+GET _tasks?actions=*search&detailed
+
+# cancel tasks
+POST _tasks/oTUltX4IQMOUUVeiohTt8A:464/_cancel
+```
+
+#### Cluster 燈號變黃或紅
+
+```
+# 檢查 Unassigned Shard 的原因, 先找到哪個 Index 及哪個 Node
+GET _cat/shards?v=true&h=index,shard,prirep,state,node,unassigned.reason&s=state&v
+
+# 使用 Cluster Allocation Explain API 查看細節
+GET _cluster/allocation/explain?filter_path=index,node_allocation_decisions.node_name,node_allocation_decisions.deciders.*
+{
+  "index": "my-index",
+  "shard": 0,
+  "primary": false,
+  "current_node": "my-node"
+}
+
+# 真的不行時，至少救回部份資料
+POST _cluster/reroute
+{
+  "commands": [
+    {
+      "allocate_empty_primary": {
+        "index": "my-index",
+        "shard": 0,
+        "node": "my-node",
+        "accept_data_loss": "true"
+      }
+    }
+  ]
+}
+
+```
+
+#### 429 Error
+
+```
+# 檢查每個 thread pool 中的 rejected tasks 數量
+GET /_cat/thread_pool?v=true&h=node_name,id,name,active,rejected,completed
+```
+
+#### 堆太多 Task 導致 Cluster 變不健康
+
+```
+# 查看 Long Running Tasks
+GET /_tasks?filter_path=nodes.*.tasks
+
+# 確認 Thread Pool 狀態
+GET /_cat/thread_pool?v&s=t,n&h=type,name,node_name,active,queue,rejected,completed
+
+# 確認是否有 Long Running Tasks 成為 Hot Thread
+GET /_nodes/hot_threads
 ```
 
 
