@@ -952,7 +952,7 @@ PUT exam
       },
       "relation": { 
         "type": "join",
-        "relation": {
+        "relations": {
           "question": "answer" 
         }
       }
