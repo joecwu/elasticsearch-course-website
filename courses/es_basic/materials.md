@@ -1,11 +1,41 @@
-# Elasticsearch Training Material
+# 喬叔的 Elasticsearch 基礎實務班 上課示範 Scripts
+
+###### tags: `Elasticsearch 基礎實務班 Demo`
+
+---
+
+[TOC]
+
+---
 
 ## ELASTICSEARCH 快速上手
+
+### 啟用 Elasticsearch 並先關閉 X-Pack Security
+
+於 elasticsearch 解壓縮的目錄中，執行以下指令：
+
+```
+./bin/elasticsearch -E xpack.security.enabled=false
+```
+
+Windows 執行 `elasticsearch.bat` 批次檔：
+
+```
+bin\elasticsearch.bat -E xpack.security.enabled=false
+```
 
 ### 查詢 Cluster 狀態
 
 ```
 GET _cat/nodes?v
+```
+
+### 啟用 Kibana
+
+在 Kibana 解壓縮的目錄中，執行以下指令：
+
+```
+./bin/kibana
 ```
 
 ### Indexing documents
@@ -456,7 +486,232 @@ POST /movies/_search
 
 ```
 
+### Index Alias
+
+#### Add alias with date math
+```
+# PUT <movies-{now{yyyy.MM.dd|+0800}}>
+# URLEncoded 完整: PUT %3Cmovies-%7Bnow%7Byyyy.MM.dd%7C%2B0800%7D%7D%3E
+# 只針對 `+` encode
+PUT <movies-{now{yyyy.MM.dd|%2B0800}}>
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "<movies-{now{yyyy.MM.dd|+0800}}>",
+        "alias": "movies"
+      }
+    }
+  ]
+}
+```
+
+#### Get alias
+
+```
+GET _alias/movies*
+```
+
+#### 情境 1 - 提供單一名稱，查詢時對照到多個 Index，寫入時指定其中一個 Index
+
+```
+PUT <test-{now-2d}>
+PUT <test-{now-1d}>
+PUT <test-{now}>
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "test-*",
+        "alias": "test"
+      }
+    },
+    {
+      "add": {
+        "index": "<test-{now}>",
+        "alias": "test",
+        "is_write_index": true
+      }
+    }
+  ]
+}
+
+GET test*/_alias
+```
+
+### 情境 2 - 搭配 Filter 做到權限控管、商業邏輯封裝的使用。
+```
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "movies",
+        "alias": "crime-movies",
+        "filter": {
+          "bool": {
+            "filter": {
+              "term": {
+                "genres.keyword": "Crime"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+
+GET crime-movies/_search
+```
+
+### 情境 3 - 避免 Client 端直接存取原始 Index，支援 Index 名稱上的版控
+
+```
+PUT drama_v1
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "drama_v1",
+        "alias": "drama"
+      }
+    }
+  ]
+}
+```
+
+### 情境 4 - 做到 blue/green deployment
+
+```
+PUT drama_v2
+
+## option1: keep drama_v1
+
+POST _aliases
+{
+  "actions": [
+    {
+      "remove": {
+        "index": "drama_v1",
+        "alias": "drama"
+      }
+    },
+    {
+      "add": {
+        "index": "drama_v2",
+        "alias": "drama"
+      }
+    }
+  ]
+}
+
+## option2: remove drama_v1 directly
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "drama_v2",
+        "alias": "drama"
+      }
+    },
+    {
+      "remove_index": {
+        "index": "drama_v1"
+      }
+    }
+  ]
+}
+
+GET drama*/_alias
+```
+
+
+
 ## Elasticsearch Under the Hood
+
+
+### 分散式架構對相關性計分的影響
+
+只有 1 份 primary shard 時：
+
+```
+PUT score
+{
+ "settings": {
+   "number_of_shards": 1
+ }
+}
+
+
+PUT score/_doc/1?refresh
+{
+  "doc": "apple"
+}
+
+PUT score/_doc/2?refresh
+{
+  "doc": "apple macbook"
+}
+
+PUT score/_doc/3?refresh
+{
+  "doc": "apple macbook pro"
+}
+
+GET score/_search?q=apple
+```
+
+有 5 份 primary shard 時：
+
+```
+DELETE score
+
+PUT score
+{
+ "settings": {
+   "number_of_shards": 5
+ }
+}
+
+PUT score/_doc/1?refresh
+{
+  "doc": "apple"
+}
+
+PUT score/_doc/2?refresh
+{
+  "doc": "apple macbook"
+}
+
+PUT score/_doc/3?refresh
+{
+  "doc": "apple macbook pro"
+}
+
+GET score/_search?q=apple
+```
+
+使用 `dfs_query_then_fetch` search type
+
+```
+GET score/_search?q=apple&search_type=dfs_query_then_fetch
+```
+
+(補充)查看計分的細節
+
+```
+GET score/_search?q=apple&explain=true
+```
+
 
 ### Elasticsearch Flush
 
@@ -486,8 +741,6 @@ PUT /index1/_settings
 ```
 
 
----
-# For Day 2
 ---
 
 ## Text Analysis
@@ -809,7 +1062,7 @@ POST _analyze
 ```
 
 
-# 補充，混合 拼音 與 IK analyzer
+#### 補充，混合 拼音 與 IK analyzer
 ```
 PUT /chinese
 {
@@ -1163,41 +1416,288 @@ GET nested_fields/_search
 }
 ```
 
+
 ### Index Template
 
+#### Component Template
+
+core + audit_info
+
 ```
-PUT _index_template/my_template
+PUT _component_template/core-mapping
 {
-  "index_patterns": [
-    "joe-*",
-    "喬-*"
-  ],
+  "version": 1,
   "template": {
-    "settings": {
-      "number_of_shards": 1
-    },
     "mappings": {
       "_source": {
-        "enabled": false
+        "enabled": true,
+        "excludes": [
+          "message"
+        ]
       },
       "properties": {
-        "id": {
-          "type": "keyword"
+        "@timestamp": {
+          "type": "date"
+        },
+        "audit_info": {
+          "type": "object",
+          "properties": {
+            "creator": {
+              "type": "keyword"
+            },
+            "create_date": {
+              "type": "date"
+            },
+            "modifier": {
+              "type": "keyword"
+            },
+            "last_modified_date": {
+              "type": "date"
+            }
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "author": "joe",
+    "description": "demo component template",
+    "last_updated_time": "2021-10-10"
+  }
+}
+
+PUT _component_template/core-setting
+{
+  "version": 1,
+  "template": {
+    "settings": {
+      "number_of_shards": 2,
+      "number_of_replicas": 1
+    }
+  },
+  "_meta": {
+    "author": "joe",
+    "description": "demo component template",
+    "last_updated_time": "2021-10-10"
+  }
+}
+
+GET _component_template/core*
+
+
+```
+
+#### Index Template
+
+```
+PUT _index_template/service-logs
+{
+  "version": 1,
+  "priority": 100,
+  "template": {
+    "aliases": {
+      "service-logs": {}
+    }
+  },
+  "index_patterns": [
+    "service-logs*"
+  ],
+  "composed_of": [
+    "core-mapping",
+    "core-setting"
+  ],
+  "_meta": {
+    "author": "joe",
+    "last_modified_date": "2021-10-17"
+  }
+}
+```
+
+#### Simulate Index
+
+```
+POST _index_template/_simulate_index/service-logs-2021.10.17
+
+```
+
+
+#### Simulate Template
+
+```
+POST _index_template/_simulate/service-logs
+
+
+```
+
+
+#### Test Data
+
+```
+# 指定 index name，透過 index template 產生 index
+PUT service-logs-2021.10.16/_doc/1
+{
+  "@timestamp": "2021-10-16T08:00:00",
+  "message": "this is a test message 1",
+  "service_type": "web-server",
+  "audit_info": {
+    "creator": "joe",
+    "create_date": "2021-10-10T08:00:00"
+  }
+}
+
+# 透過 alias 存取
+GET service-logs
+GET service-logs/_search
+
+# 透過 alias indexing document
+PUT service-logs/_doc/2
+{
+  "@timestamp": "2021-10-16T08:00:00",
+  "message": "this is a test message 2",
+  "service_type": "web-server",
+  "audit_info": {
+    "creator": "joe",
+    "create_date": "2021-10-10T08:10:00"
+  }
+}
+
+# 指定新的 index，同樣透過 index template 產生 index
+PUT service-logs-2021.10.17/_doc/3
+{
+  "@timestamp": "2021-10-17T08:00:00",
+  "message": "this is a test message 3",
+  "service_type": "web-server",
+  "audit_info": {
+    "creator": "joe",
+    "create_date": "2021-10-10T08:00:00"
+  }
+}
+
+# 查看 alias 同時綁定兩個 index
+GET service-logs
+
+# 失敗，超過一個 index 綁在 alias 上面，alias 沒有宣告 is_write_index
+PUT service-logs/_doc/4
+{
+  "@timestamp": "2021-10-17T08:00:00",
+  "message": "this is a test message 4",
+  "service_type": "web-server",
+  "audit_info": {
+    "creator": "joe",
+    "create_date": "2021-10-10T08:10:00"
+  }
+}
+
+# 這時，就要使用先前介紹的 Alias API，指定 `is_write_index`
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "service-logs-2021.10.17",
+        "alias": "service-logs",
+        "is_write_index": true
+      }
+    }
+  ]
+}
+
+```
+
+#### 情境題 - 客服部門只能存取最近一年的資料，其他人能正常存取全部資料
+
+```
+PUT _component_template/audit-logs_settings
+{
+  "version": 1,
+  "template": {
+    "settings": {
+      "index.auto_expand_replicas": "1-3"
+    }
+  }
+}
+
+PUT _component_template/audit-logs_mappings
+{
+  "version": 1,
+  "template": {
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
         }
       }
     }
   }
 }
 
-POST joe-yoyo/_doc/1
+PUT _component_template/audit-logs_cs_alias
 {
-  "id":"hi hi hi",
-  "name":"yo yo yo"
+  "version": 1,
+  "template": {
+    "aliases": {
+      "cs-{index}": {
+        "index": "audit-logs*",
+        "filter": {
+          "bool": {
+            "filter": {
+              "range": {
+                "@timestamp": {
+                  "gte": "now-1y"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-GET joe-yoyo/_mapping
-```
+PUT _index_template/audit-logs
+{
+  "index_patterns": [
+    "audit-logs*"
+  ],
+  "template": {
+    "mappings": {},
+    "settings": {},
+    "aliases": {}
+  },
+  "priority": 100,
+  "composed_of": [ "audit-logs_settings", "audit-logs_mappings", "audit-logs_cs_alias" ]
+}
 
+PUT audit-logs-order/_doc/1
+{
+  "@timestamp": "2021-10-16",
+  "test": 1
+}
+
+
+PUT audit-logs-order/_doc/2
+{
+  "@timestamp": "2019-10-16",
+  "test": 2
+}
+
+PUT audit-logs-payment/_doc/1
+{
+  "@timestamp": "2019-10-16",
+  "test": 123
+}
+
+GET audit-logs-order
+GET audit-logs-payment
+
+GET cs-audit-logs-order/_search
+GET cs-audit-logs-payment/_search
+
+GET audit-logs-order/_search
+GET audit-logs-payment/_search
+
+```
 
 ## Search
 

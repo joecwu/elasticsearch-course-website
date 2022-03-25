@@ -1,5 +1,12 @@
-# Elasticsearch 進階運維班
+# 喬叔 Elasticsearch 進階運維班 2022.03.15 ~ 16 LINE Taiwan 企業內訓版 上課示範 Scripts
 
+###### tags: `Elasticsearch 進階運維班 Demo`
+
+---
+
+[TOC]
+
+---
 ## 1. 深入 Elasticsearch 分散式架構
 
 ### 1-1 Elasticsearch Cluster 的形成與維護機制
@@ -22,7 +29,7 @@ cluster.initial_master_nodes:
   - es03
 xpack.security.enabled: false
 
-network.host: localhost
+network.host: [_local_, _site_]
 # 如果要方便分辨哪個 node 在哪個 port，可以直接指定
 http.port: 9200
 transport.port: 9300
@@ -48,7 +55,7 @@ cluster.initial_master_nodes:
   - es03
 xpack.security.enabled: false
 
-network.host: localhost
+network.host: [_local_, _site_]
 # 如果要方便分辨哪個 node 在哪個 port，可以直接指定
 http.port: 9201
 transport.port: 9301
@@ -70,7 +77,7 @@ cluster.initial_master_nodes:
   - es03
 xpack.security.enabled: false
 
-network.host: localhost
+network.host: [_local_, _site_]
 # 如果要方便分辨哪個 node 在哪個 port，可以直接指定
 http.port: 9202
 transport.port: 9302
@@ -298,59 +305,6 @@ GET _cluster/state/routing_nodes?filter_path=routing_nodes.unassigned
 
 #### 練習：雙 AZ 以及雙 Rack 的 Cluster
 
- - `elasticsearch.yml` in Node1 & Node2
-```
-node.attr.rack: Rack1
-node.attr.zone: zoneA
-cluster.routing.allocation.awareness.attributes: rack,zone
-cluster.routing.allocation.awareness.force.zone.values: zoneA,zoneB
-```
-
- - `elasticsearch.yml` in Node3
-```
-node.attr.rack: Rack2
-node.attr.zone: zoneA
-cluster.routing.allocation.awareness.attributes: rack,zone
-cluster.routing.allocation.awareness.force.zone.values: zoneA,zoneB
-```
-
- - `elasticsearch.yml` in Node4
-```
-node.attr.rack: Rack3
-node.attr.zone: zoneB
-cluster.routing.allocation.awareness.attributes: rack,zone
-cluster.routing.allocation.awareness.force.zone.values: zoneA,zoneB
-```
-
- - `elasticsearch.yml` in Node4
-```
-node.attr.rack: Rack4
-node.attr.zone: zoneB
-cluster.routing.allocation.awareness.attributes: rack,zone
-cluster.routing.allocation.awareness.force.zone.values: zoneA,zoneB
-```
-
-- Create `movies` index
-```
-PUT movies
-{
-  "settings": {
-    "number_of_shards": 5, 
-    "number_of_replicas": 2
-  }
-}
-```
-
-- Use the Cluster Allocation Explain API to check the status of shard in specific node.
-```
-GET _cluster/allocation/explain
-{
-  "index": "movie",
-  "primary": true,
-  "current_node": "es04",
-  "shard": 2
-}
-```
 
 
 ### 1-5 Routing 的運用方式
@@ -434,28 +388,6 @@ GET duplicated_id/_search
 
 #### 練習：自訂 Routing Value
 
-```
-PUT user_data
-{
-  "settings": {
-    "index.number_of_shards": 3,
-    "index.number_of_routing_shards": 12,
-    "index.routing_partition_size": 5
-  },
-  "mappings": {
-    "_routing": {
-      "required": true
-    }
-  }
-}
-
-# 查看設定
-GET user_data
-
-# 如何看 routing shards?
-GET _cluster/state?filter_path=metadata.indices.user_data
-
-```
 
 
 ### 1-6 分散式系統的分頁處理
@@ -719,97 +651,6 @@ GET ccr_data/_search_shards?routing=xxx
 
 #### 練習：Cross Cluster Search - Movies
 
-設定三台 Node 的 `elasticsearch.yml`
-
-```
-cluster.name: movie-hk
-node.name: es1.hk
-path.data: data_es1.hk
-path.logs: logs_es1.hk
-xpack.security.enabled: false
-http.port: 9200
-transport.port: 9300
-```
-
-```
-cluster.name: movie-us
-node.name: es1.us
-path.data: data_es1.us
-path.logs: logs_es1.us
-xpack.security.enabled: false
-http.port: 9201
-transport.port: 9301
-```
-
-```
-cluster.name: movie-tw
-node.name: es1.tw
-path.data: data_es1.tw
-path.logs: logs_es1.tw
-xpack.security.enabled: false
-http.port: 9202
-transport.port: 9302
-```
-
-準備 Cluster Settings
-```
-PUT _cluster/settings
-{
-  "persistent": {
-    "cluster": {
-      "remote": {
-        "movie-hk": {
-          "seeds": [
-            "127.0.0.1:9300"
-          ],
-          "skip_unavailable": true
-        },
-        "movie-us": {
-          "seeds": [
-            "127.0.0.1:9301"
-          ],
-          "skip_unavailable": true
-        },
-        "movie-tw": {
-          "seeds": [
-            "127.0.0.1:9302"
-          ],
-          "skip_unavailable": true
-        }
-      }
-    }
-  }
-}
-```
-
-
-使用 Curl 設定三個 Clusters
-```
-curl -XPUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d'
-{"persistent":{"cluster":{"remote":{"movie-hk":{"seeds":["127.0.0.1:9300"],"skip_unavailable":true},"movie-us":{"seeds":["127.0.0.1:9301"],"skip_unavailable":true},"movie-tw":{"seeds":["127.0.0.1:9302"],"skip_unavailable":true}}}}}'
-
-curl -XPUT "http://localhost:9201/_cluster/settings" -H 'Content-Type: application/json' -d'
-{"persistent":{"cluster":{"remote":{"movie-hk":{"seeds":["127.0.0.1:9300"],"skip_unavailable":true},"movie-us":{"seeds":["127.0.0.1:9301"],"skip_unavailable":true},"movie-tw":{"seeds":["127.0.0.1:9302"],"skip_unavailable":true}}}}}'
-
-curl -XPUT "http://localhost:9202/_cluster/settings" -H 'Content-Type: application/json' -d'
-{"persistent":{"cluster":{"remote":{"movie-hk":{"seeds":["127.0.0.1:9300"],"skip_unavailable":true},"movie-us":{"seeds":["127.0.0.1:9301"],"skip_unavailable":true},"movie-tw":{"seeds":["127.0.0.1:9302"],"skip_unavailable":true}}}}}'
-
-```
-
-匯入資料
-```
-curl -s "https://es.joecwu.com/top_rated_movies.en_US.ndjson" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9201/top_rated_movies/_bulk' --data-binary @-
-
-curl -s "https://es.joecwu.com/top_rated_movies.zh_TW.ndjson" | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9202/top_rated_movies/_bulk' --data-binary @-
-```
-
-
-開始查詢
-```
-GET movie-tw:top_rated_movies/_search
-GET movie-us:top_rated_movies/_search
-GET *:top_rated_movies/_search
-```
 
 
 #### Cross Cluster Replication
@@ -952,7 +793,7 @@ PUT exam
       },
       "relation": { 
         "type": "join",
-        "relations": {
+        "relation": {
           "question": "answer" 
         }
       }
@@ -1067,142 +908,7 @@ GET exam/_search
 
 #### 練習：多層關係的資料建模
 
-```
 
-# Mapping
-PUT exam
-{
-  "mappings": {
-    "properties": {
-      "uid": {
-        "type": "keyword"
-      },
-      "text": {
-        "type": "text"
-      },
-      "relation": { 
-        "type": "join",
-        "relation": {
-          "question": "answer" 
-        }
-      }
-    }
-  }
-}
-
-# Parent: Question
-PUT exam/_doc/1?refresh
-{
-  "text": "question 1",
-  "relation": {
-    "name": "question"
-  }
-}
-PUT exam/_doc/2?refresh
-{
-  "text": "question 2",
-  "relation": {
-    "name": "question"
-  }
-}
-
-# Child: Answers
-PUT exam/_doc/3?refresh&routing=1
-{
-  "text": "Answer 1",
-  "relation": {
-    "name": "answer",
-    "parent": "1"
-  }
-}
-PUT exam/_doc/4?refresh&routing=1
-{
-  "text": "Answer 2",
-  "relation": {
-    "name": "answer",
-    "parent": "1"
-  }
-}
-PUT exam/_doc/5?refresh&routing=2
-{
-  "text": "Answer 3",
-  "relation": {
-    "name": "answer",
-    "parent": "2"
-  }
-}
-
-# Child: comment
-PUT exam/_doc/6?refresh&routing=1
-{
-  "text": "comment 1",
-  "relation": {
-    "name": "comment",
-    "parent": "1"
-  }
-}
-PUT exam/_doc/7?refresh&routing=2
-{
-  "text": "comment 2",
-  "relation": {
-    "name": "comment",
-    "parent": "2"
-  }
-}
-PUT exam/_doc/8?refresh&routing=2
-{
-  "text": "comment 3",
-  "relation": {
-    "name": "comment",
-    "parent": "2"
-  }
-}
-
-# Child: vote !!(這裡的 routing 是要填 question 的 _id)
-PUT exam/_doc/9?refresh&routing=2
-{
-  "text": "vote 1",
-  "relation": {
-    "name": "vote",
-    "parent": "5"
-  }
-}
-
-# 找出 question 的 text 包含 2 的 answer 與 comment
-GET exam/_search
-{
-  "query": {
-    "has_parent": {
-      "parent_type": "question",
-      "query": {
-        "match": {
-          "text": "2"
-        }
-      }
-    }
-  }
-}
-
-# 查詢出 answer 中擁有 vote 的 question，並使用 inner_hits 列出找尋的過程
-GET exam/_search
-{
-  "query": {
-    "has_child": {
-      "type": "answer",
-      "query": {
-        "has_child": {
-          "type": "vote",
-          "query": {
-            "match_all": {}
-          },
-          "inner_hits": {}
-        }
-      },
-      "inner_hits": {}
-    }
-  }
-}
-```
 
 ### 2.2 事先定義好 Data Model
 
@@ -1322,79 +1028,9 @@ PUT my-index/_doc/1
 
 #### 練習：設定適合情境需求的 Dynamic Template
 
-```
-PUT _index_template/my_logs
-{
-  "index_patterns": [
-    "logs-*"
-  ],
-  "template": {
-    "mappings": {
-      "dynamic": "true",
-      "dynamic_templates": [
-        {
-          "string_message": {
-            "match_mapping_type": "string",
-            "match": "message",
-            "mapping": {
-              "type": "text"
-            }
-          }
-        },
-        {
-          "string_others": {
-            "match_mapping_type": "string",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-        },
-        {
-          "unindexed_longs": {
-            "match_mapping_type": "long",
-            "path_unmatch": "http.*",
-            "mapping": {
-              "type": "long",
-              "index": false
-            }
-          }
-        },
-        {
-          "unindexed_longs": {
-            "match_mapping_type": "double",
-            "path_unmatch": "http.*",
-            "mapping": {
-              "type": "float",
-              "index": false
-            }
-          }
-        }
-      ]
-    }
-  },
-  "priority": 500,
-  "version": 1,
-  "_meta": {
-    "description": "uncle joe's demo"
-  }
-}
 
-PUT logs-1/_doc/1
-{
-  "message": "fulltext search supported",
-  "id": "keyword",
-  "price": 12.34,
-  "volume": 123,
-  "http": {
-    "status": 200
-  }
-}
-
-GET logs-1
-```
 
 ### 2.3 無法事先定義好 Data Model
-
 
 #### 情境題: 事先所定義的欄位不足，怎麼辦?
 
@@ -1698,9 +1334,9 @@ GET rf_test_new/_search
 ```
 
 
-## 3. Data Ingestion
+## 2. Data Ingestion
 
-### 3.1 Ingest Pipeline
+### 2.1 Ingest Pipeline
 
 #### Dissect (demo: create on Kibana as well)
 
@@ -2034,8 +1670,6 @@ xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
 ./bin/elasticsearch-certutil http
 
 # Use an existing CA? [y/N]y
-
-# 填入 host (localhost & 127.0.0.1)
 ```
 
 - unzip `elasticsearch-ssl-http.zip`
@@ -2057,65 +1691,19 @@ xpack.security.http.ssl.keystore.path: http.p12
 - modify `kibana.yml` to trust CA and access ES via HTTPS
 
 ```
-elasticsearch.ssl.certificateAuthorities: config/elasticsearch-ca.pem
+elasticsearch.ssl.certificateAuthorities: $KBN_PATH_CONF/elasticsearch-ca.pem
 
 elasticsearch.hosts: https://<your_elasticsearch_host>:9200
 ```
 
 #### 練習： 建立安全的 Cluster
 
-- 直接使用 8.0 auto configured security 啟動新 node
-- 注意: 不要設定其他 transport, discovery 等設定，以免啟用 production mode
 
-```
-cluster.name: secure-cluster
-node.name: node-1
-```
-
-- 透過 console 的 enrollment token 啟動第二台 node 與 kibana
-
-- 建立一組新的 enrollment token
-
-```
-bin/elasticsearch-create-enrollment-token -s node
-```
-
-- 將第一個 node 的 transport 對外開放，修改 `elasticsearch.yml`
-
-```
-transport.host: 0.0.0.0
-```
-
-- 重啟第一台 node
-
-- 讓第三台 node 啟動
-
-```
-bin/elasticsearch -E cluster.name=secure-cluster -E node.name=node-2 --enrollment-token <token>
-```
 
 ### 4.3 Role-Based Access Control
 
 #### 練習: 依照 e-commerce 客服部需求，建立 RBAC
 
-1. create new space - Customer Support 
-with previliges below
- - Kibana Discover
-
-2. create role - customer_support
-
-- indices: kibana_sample_data_ecommerce
-- privileges: read
-
-- Kibana privileges: Discover(All)
-
-3. create user - joe
-
-- assigne role: customer_support
-
-4. 進階需求.... (要 License)
-
-- 開啟後可 grant for `*` but deny for `products.min_price`.
 
 
 ### 4.4 Snapshot & Restore
@@ -2666,7 +2254,7 @@ PUT joe-test-000001
 PUT _cluster/settings
 {
   "transient": {
-    "indices.lifecycle.poll_interval": "2s"
+    "indices.lifecycle.poll_interval": "10s"
   }
 }
 
