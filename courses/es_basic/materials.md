@@ -70,7 +70,7 @@ PUT /movies/_doc/1
   "title": "Star Wars: Episode VII – The Force Awakens",
   "director": "J.J. Abrams",
   "year": 2015,
-  "Genres": ["Action", "Adventure", "Fantasy"]
+  "genres": ["Action", "Adventure", "Fantasy"]
 }
 ```
 
@@ -543,7 +543,7 @@ POST _aliases
 GET test*/_alias
 ```
 
-### 情境 2 - 搭配 Filter 做到權限控管、商業邏輯封裝的使用。
+#### 情境 2 - 搭配 Filter 做到權限控管、商業邏輯封裝的使用。
 ```
 POST _aliases
 {
@@ -569,7 +569,7 @@ POST _aliases
 GET crime-movies/_search
 ```
 
-### 情境 3 - 避免 Client 端直接存取原始 Index，支援 Index 名稱上的版控
+#### 情境 3 - 避免 Client 端直接存取原始 Index，支援 Index 名稱上的版控
 
 ```
 PUT drama_v1
@@ -587,7 +587,7 @@ POST _aliases
 }
 ```
 
-### 情境 4 - 做到 blue/green deployment
+#### 情境 4 - 做到 blue/green deployment
 
 ```
 PUT drama_v2
@@ -633,8 +633,6 @@ POST _aliases
 
 GET drama*/_alias
 ```
-
-
 
 ## Elasticsearch Under the Hood
 
